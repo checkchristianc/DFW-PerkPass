@@ -65,13 +65,9 @@ export default function PaymentSetupScreen() {
     }
 
     try {
-      const canOpen = await Linking.canOpenURL(STRIPE_PAYMENT_LINK);
-      
-      if (canOpen) {
-        await Linking.openURL(STRIPE_PAYMENT_LINK);
-      } else {
-        console.error('Cannot open Stripe payment link');
-      }
+      console.log('Attempting to open:', STRIPE_PAYMENT_LINK);
+      await Linking.openURL(STRIPE_PAYMENT_LINK);
+      console.log('Successfully opened Stripe payment link');
     } catch (err) {
       console.error('Error opening payment link:', err);
     }
