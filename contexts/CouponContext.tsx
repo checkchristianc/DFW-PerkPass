@@ -92,35 +92,35 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     }
   });
 
-  const saveFavoritesMutation = useMutation({
+  const { mutate: mutateFavorites } = useMutation({
     mutationFn: async (newFavorites: string[]) => {
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
       return newFavorites;
     }
   });
 
-  const saveApprovedCouponsMutation = useMutation({
+  const { mutate: mutateApprovedCoupons } = useMutation({
     mutationFn: async (newApprovedCoupons: any[]) => {
       await AsyncStorage.setItem(APPROVED_COUPONS_KEY, JSON.stringify(newApprovedCoupons));
       return newApprovedCoupons;
     }
   });
 
-  const savePendingCouponsMutation = useMutation({
+  const { mutate: mutatePendingCoupons } = useMutation({
     mutationFn: async (newPendingCoupons: any[]) => {
       await AsyncStorage.setItem(PENDING_COUPONS_KEY, JSON.stringify(newPendingCoupons));
       return newPendingCoupons;
     }
   });
 
-  const saveRedemptionsMutation = useMutation({
+  const { mutate: mutateRedemptions } = useMutation({
     mutationFn: async (newRedemptions: CouponRedemption[]) => {
       await AsyncStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(newRedemptions));
       return newRedemptions;
     }
   });
 
-  const saveViewsMutation = useMutation({
+  const { mutate: mutateViews } = useMutation({
     mutationFn: async (newViews: Record<string, number>) => {
       await AsyncStorage.setItem(VIEWS_KEY, JSON.stringify(newViews));
       return newViews;
@@ -165,10 +165,10 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
         ? prev.filter(id => id !== couponId)
         : [...prev, couponId];
       
-      saveFavoritesMutation.mutate(newFavorites);
+      mutateFavorites(newFavorites);
       return newFavorites;
     });
-  }, []);
+  }, [mutateFavorites]);
 
   const isFavorite = useCallback((couponId: string) => favorites.includes(couponId), [favorites]);
 
@@ -232,23 +232,23 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       
       setApprovedCoupons(prevApproved => {
         const newApprovedCoupons = [approvedCoupon, ...prevApproved];
-        saveApprovedCouponsMutation.mutate(newApprovedCoupons);
+        mutateApprovedCoupons(newApprovedCoupons);
         return newApprovedCoupons;
       });
       
-      savePendingCouponsMutation.mutate(newPendingCoupons);
+      mutatePendingCoupons(newPendingCoupons);
       return newPendingCoupons;
     });
-  }, []);
+  }, [mutateApprovedCoupons, mutatePendingCoupons]);
 
   const denyCoupon = useCallback((couponId: string) => {
     console.log('Denying coupon:', couponId);
     setPendingCoupons(prev => {
       const newPendingCoupons = prev.filter(c => c.id !== couponId);
-      savePendingCouponsMutation.mutate(newPendingCoupons);
+      mutatePendingCoupons(newPendingCoupons);
       return newPendingCoupons;
     });
-  }, []);
+  }, [mutatePendingCoupons]);
 
   const submitCoupon = useCallback((couponData: {
     title: string;
@@ -284,10 +284,10 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     console.log('Submitting new coupon:', newCoupon);
     setPendingCoupons(prev => {
       const newPendingCoupons = [newCoupon, ...prev];
-      savePendingCouponsMutation.mutate(newPendingCoupons);
+      mutatePendingCoupons(newPendingCoupons);
       return newPendingCoupons;
     });
-  }, []);
+  }, [mutatePendingCoupons]);
 
   const redeemCoupon = useCallback(async (couponId: string, userId?: string) => {
     console.log('Redeeming coupon:', couponId);
@@ -305,7 +305,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
         
         setRedemptions(prev => {
           const newRedemptions = [...prev, newRedemption];
-          saveRedemptionsMutation.mutate(newRedemptions);
+          mutateRedemptions(newRedemptions);
           return newRedemptions;
         });
         
@@ -317,14 +317,14 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       console.log('Error redeeming coupon:', error);
       return { success: false };
     }
-  }, []);
+  }, [mutateRedemptions]);
 
   const trackView = useCallback(async (couponId: string) => {
     console.log('Tracking view for coupon:', couponId);
     
     setViews(prev => {
       const newViews = { ...prev, [couponId]: (prev[couponId] || 0) + 1 };
-      saveViewsMutation.mutate(newViews);
+      mutateViews(newViews);
       return newViews;
     });
     
@@ -333,7 +333,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     } catch (error) {
       console.log('Error tracking view:', error);
     }
-  }, []);
+  }, [mutateViews]);
 
   const getCouponStats = useCallback((couponId: string) => {
     const redemptionCount = redemptions.filter(r => r.couponId === couponId).length;
@@ -377,9 +377,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     toggleFavorite,
     isFavorite,
     searchQuery,
-    setSearchQuery,
     selectedCategory,
-    setSelectedCategory,
     categories,
     favoritesQuery.isLoading,
     approvedCouponsQuery.isLoading,
