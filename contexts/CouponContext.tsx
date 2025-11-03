@@ -351,6 +351,35 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     };
   }, [redemptions, views]);
 
+  const deleteCoupon = useCallback(async (couponId: string, businessName: string) => {
+    console.log('Deleting coupon:', couponId, 'for business:', businessName);
+    
+    try {
+      const result = await trpcClient.coupons.delete.mutate({ couponId, businessName });
+      
+      if (result.success) {
+        setPendingCoupons(prev => {
+          const newPendingCoupons = prev.filter(c => c.id !== couponId);
+          mutatePendingCoupons(newPendingCoupons);
+          return newPendingCoupons;
+        });
+        
+        setApprovedCoupons(prev => {
+          const newApprovedCoupons = prev.filter(c => c.id !== couponId);
+          mutateApprovedCoupons(newApprovedCoupons);
+          return newApprovedCoupons;
+        });
+        
+        return { success: true };
+      }
+      
+      return { success: false };
+    } catch (error) {
+      console.log('Error deleting coupon:', error);
+      return { success: false };
+    }
+  }, [mutatePendingCoupons, mutateApprovedCoupons]);
+
   return useMemo(() => ({
     coupons: filteredCoupons,
     allCoupons,
@@ -374,6 +403,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     getCouponStats,
     redemptions,
     views,
+    deleteCoupon,
   }), [
     filteredCoupons,
     allCoupons,
@@ -397,5 +427,6 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     getCouponStats,
     redemptions,
     views,
+    deleteCoupon,
   ]);
 });

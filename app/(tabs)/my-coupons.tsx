@@ -6,8 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
-import { Calendar, Clock, QrCode, Tag } from 'lucide-react-native';
+import { Calendar, Clock, QrCode, Tag, Trash2 } from 'lucide-react-native';
 import Svg, { Rect } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -258,6 +259,37 @@ export default function MyCouponsScreen() {
                       </Text>
                     </View>
                   </View>
+
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => {
+                      Alert.alert(
+                        'Delete Coupon',
+                        'Are you sure you want to delete this coupon? This action cannot be undone.',
+                        [
+                          {
+                            text: 'Cancel',
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: async () => {
+                              const result = await couponContext.deleteCoupon(item.id, user.businessName!);
+                              if (result.success) {
+                                Alert.alert('Success', 'Coupon deleted successfully');
+                              } else {
+                                Alert.alert('Error', 'Failed to delete coupon');
+                              }
+                            },
+                          },
+                        ]
+                      );
+                    }}
+                  >
+                    <Trash2 size={18} color="#dc2626" />
+                    <Text style={styles.deleteButtonText}>Delete Coupon</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             );
@@ -739,5 +771,23 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 12,
     color: Colors.textSecondary,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#dc2626',
+    backgroundColor: 'rgba(220, 38, 38, 0.05)',
+  },
+  deleteButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#dc2626',
   },
 });
