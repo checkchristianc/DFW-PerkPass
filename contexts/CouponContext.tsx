@@ -127,11 +127,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     }
   });
 
-  const { mutate: mutateFavorites } = saveFavoritesMutation;
-  const { mutate: mutateApprovedCoupons } = saveApprovedCouponsMutation;
-  const { mutate: mutatePendingCoupons } = savePendingCouponsMutation;
-  const { mutate: mutateRedemptions } = saveRedemptionsMutation;
-  const { mutate: mutateViews } = saveViewsMutation;
+
 
   useEffect(() => {
     if (favoritesQuery.data) {
@@ -164,13 +160,15 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
   }, [viewsQuery.data]);
 
   const toggleFavorite = useCallback((couponId: string) => {
-    const newFavorites = favorites.includes(couponId)
-      ? favorites.filter(id => id !== couponId)
-      : [...favorites, couponId];
-    
-    setFavorites(newFavorites);
-    mutateFavorites(newFavorites);
-  }, [favorites, mutateFavorites]);
+    setFavorites(prev => {
+      const newFavorites = prev.includes(couponId)
+        ? prev.filter(id => id !== couponId)
+        : [...prev, couponId];
+      
+      saveFavoritesMutation.mutate(newFavorites);
+      return newFavorites;
+    });
+  }, []);
 
   const isFavorite = useCallback((couponId: string) => favorites.includes(couponId), [favorites]);
 
@@ -221,30 +219,36 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
 
   const approveCoupon = useCallback((couponId: string) => {
     console.log('Approving coupon:', couponId);
-    const couponToApprove = pendingCoupons.find(c => c.id === couponId);
-    if (couponToApprove) {
+    setPendingCoupons(prev => {
+      const couponToApprove = prev.find(c => c.id === couponId);
+      if (!couponToApprove) return prev;
+      
       const approvedCoupon = {
         ...couponToApprove,
         status: 'approved' as CouponStatus,
         reviewedAt: new Date().toISOString(),
       };
-      const newPendingCoupons = pendingCoupons.filter(c => c.id !== couponId);
-      const newApprovedCoupons = [approvedCoupon, ...approvedCoupons];
+      const newPendingCoupons = prev.filter(c => c.id !== couponId);
       
-      setPendingCoupons(newPendingCoupons);
-      setApprovedCoupons(newApprovedCoupons);
+      setApprovedCoupons(prevApproved => {
+        const newApprovedCoupons = [approvedCoupon, ...prevApproved];
+        saveApprovedCouponsMutation.mutate(newApprovedCoupons);
+        return newApprovedCoupons;
+      });
       
-      mutatePendingCoupons(newPendingCoupons);
-      mutateApprovedCoupons(newApprovedCoupons);
-    }
-  }, [pendingCoupons, approvedCoupons, mutatePendingCoupons, mutateApprovedCoupons]);
+      savePendingCouponsMutation.mutate(newPendingCoupons);
+      return newPendingCoupons;
+    });
+  }, []);
 
   const denyCoupon = useCallback((couponId: string) => {
     console.log('Denying coupon:', couponId);
-    const newPendingCoupons = pendingCoupons.filter(c => c.id !== couponId);
-    setPendingCoupons(newPendingCoupons);
-    mutatePendingCoupons(newPendingCoupons);
-  }, [pendingCoupons, mutatePendingCoupons]);
+    setPendingCoupons(prev => {
+      const newPendingCoupons = prev.filter(c => c.id !== couponId);
+      savePendingCouponsMutation.mutate(newPendingCoupons);
+      return newPendingCoupons;
+    });
+  }, []);
 
   const submitCoupon = useCallback((couponData: {
     title: string;
@@ -278,10 +282,12 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     };
     
     console.log('Submitting new coupon:', newCoupon);
-    const newPendingCoupons = [newCoupon, ...pendingCoupons];
-    setPendingCoupons(newPendingCoupons);
-    mutatePendingCoupons(newPendingCoupons);
-  }, [pendingCoupons, mutatePendingCoupons]);
+    setPendingCoupons(prev => {
+      const newPendingCoupons = [newCoupon, ...prev];
+      savePendingCouponsMutation.mutate(newPendingCoupons);
+      return newPendingCoupons;
+    });
+  }, []);
 
   const redeemCoupon = useCallback(async (couponId: string, userId?: string) => {
     console.log('Redeeming coupon:', couponId);
@@ -297,9 +303,11 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
           redeemedAt: result.redemption.redeemedAt,
         };
         
-        const newRedemptions = [...redemptions, newRedemption];
-        setRedemptions(newRedemptions);
-        mutateRedemptions(newRedemptions);
+        setRedemptions(prev => {
+          const newRedemptions = [...prev, newRedemption];
+          saveRedemptionsMutation.mutate(newRedemptions);
+          return newRedemptions;
+        });
         
         return { success: true };
       }
@@ -309,21 +317,23 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       console.log('Error redeeming coupon:', error);
       return { success: false };
     }
-  }, [redemptions, mutateRedemptions]);
+  }, []);
 
   const trackView = useCallback(async (couponId: string) => {
     console.log('Tracking view for coupon:', couponId);
     
-    const newViews = { ...views, [couponId]: (views[couponId] || 0) + 1 };
-    setViews(newViews);
-    mutateViews(newViews);
+    setViews(prev => {
+      const newViews = { ...prev, [couponId]: (prev[couponId] || 0) + 1 };
+      saveViewsMutation.mutate(newViews);
+      return newViews;
+    });
     
     try {
       await trpcClient.coupons.trackView.mutate({ couponId });
     } catch (error) {
       console.log('Error tracking view:', error);
     }
-  }, [views, mutateViews]);
+  }, []);
 
   const getCouponStats = useCallback((couponId: string) => {
     const redemptionCount = redemptions.filter(r => r.couponId === couponId).length;
