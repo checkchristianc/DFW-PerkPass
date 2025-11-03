@@ -88,10 +88,28 @@ export default function MyCouponsScreen() {
   const [expandedCouponId, setExpandedCouponId] = useState<string | null>(null);
 
   const businessCoupons = useMemo(() => {
-    if (!user?.businessName) return [];
+    if (!user?.businessName) {
+      console.log('No user or businessName');
+      return [];
+    }
+    
+    console.log('User businessName:', user.businessName);
+    console.log('Pending coupons count:', couponContext.pendingCoupons.length);
+    console.log('All coupons count:', couponContext.allCoupons.length);
+    console.log('Pending coupons:', JSON.stringify(couponContext.pendingCoupons.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
+    console.log('All coupons:', JSON.stringify(couponContext.allCoupons.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
     
     const allBusinessCoupons = [...couponContext.pendingCoupons, ...couponContext.allCoupons];
-    return allBusinessCoupons.filter(c => c.businessName === user.businessName);
+    console.log('Combined coupons count:', allBusinessCoupons.length);
+    
+    const filtered = allBusinessCoupons.filter(c => {
+      const matches = c.businessName === user.businessName;
+      console.log(`Coupon "${c.title}" businessName: "${c.businessName}" matches user businessName "${user.businessName}": ${matches}`);
+      return matches;
+    });
+    
+    console.log('Filtered business coupons count:', filtered.length);
+    return filtered;
   }, [couponContext.pendingCoupons, couponContext.allCoupons, user?.businessName]);
 
   const redeemedCoupons = useMemo(() => {

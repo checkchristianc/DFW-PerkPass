@@ -281,13 +281,17 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       viewCount: 0,
     };
     
-    console.log('Submitting new coupon:', newCoupon);
+    console.log('Submitting new coupon:', JSON.stringify(newCoupon, null, 2));
+    console.log('Current pending coupons before submission:', pendingCoupons.length);
+    
     setPendingCoupons(prev => {
       const newPendingCoupons = [newCoupon, ...prev];
+      console.log('New pending coupons array length:', newPendingCoupons.length);
+      console.log('All pending coupons:', JSON.stringify(newPendingCoupons.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
       mutatePendingCoupons(newPendingCoupons);
       return newPendingCoupons;
     });
-  }, [mutatePendingCoupons]);
+  }, [mutatePendingCoupons, pendingCoupons]);
 
   const redeemCoupon = useCallback(async (couponId: string, userId?: string) => {
     console.log('Redeeming coupon:', couponId);
