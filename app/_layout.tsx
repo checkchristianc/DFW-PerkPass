@@ -42,7 +42,7 @@ function RootLayoutNav() {
         }} 
       />
       <Stack.Screen 
-        name="business/dashboard" 
+        name="(business-tabs)" 
         options={{ 
           headerShown: false
         }} 

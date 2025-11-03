@@ -52,7 +52,7 @@ export default function HomeScreen() {
                   <Text style={styles.adminButtonText}>Admin</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={() => router.push('/business/dashboard')}
+                  onPress={() => router.push('/(business-tabs)/dashboard')}
                   style={styles.testButton}
                 >
                   <Briefcase size={18} color={Colors.accent} />
