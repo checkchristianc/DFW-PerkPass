@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   categoryScroll: {
-    marginTop: 12,
+    marginTop: 8,
     marginBottom: 0,
   },
   categoryScrollContent: {
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
   },
   resultsHeader: {
     paddingHorizontal: 20,
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: 4,
+    marginBottom: 4,
   },
   resultsText: {
     fontSize: 15,
