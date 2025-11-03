@@ -11,6 +11,7 @@ import {
   Mail,
   Store,
   ArrowLeft,
+  BarChart3,
 } from 'lucide-react-native';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -184,7 +185,12 @@ export default function AdminAnalyticsScreen() {
             <ArrowLeft size={24} color={Colors.accent} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Business Analytics</Text>
-          <View style={{ width: 24 }} />
+          <TouchableOpacity
+            style={styles.revenueIconButton}
+            onPress={() => router.push('/admin/revenue' as any)}
+          >
+            <BarChart3 size={24} color={Colors.accent} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.overviewSection}>
@@ -512,5 +518,13 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     textAlign: 'center',
     marginTop: 8,
+  },
+  revenueIconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: `${Colors.primary}25`,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

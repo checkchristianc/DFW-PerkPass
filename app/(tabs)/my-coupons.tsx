@@ -8,9 +8,10 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { Calendar, Clock, QrCode, Tag, Trash2 } from 'lucide-react-native';
+import { Calendar, Clock, QrCode, Tag, Trash2, Edit3 } from 'lucide-react-native';
 import Svg, { Rect } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 
 import Colors from '@/constants/colors';
 import { useCoupons } from '@/contexts/CouponContext';
@@ -85,6 +86,7 @@ function generateQRPattern(value: string): boolean[][] {
 export default function MyCouponsScreen() {
   const couponContext = useCoupons();
   const { user } = useAuth();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [expandedCouponId, setExpandedCouponId] = useState<string | null>(null);
 
@@ -258,6 +260,18 @@ export default function MyCouponsScreen() {
                         Created {formatDate(item.submittedAt || new Date().toISOString())}
                       </Text>
                     </View>
+                  </View>
+
+                  <View style={styles.actionButtons}>
+                    <TouchableOpacity
+                      style={styles.editButton}
+                      onPress={() => {
+                        router.push(`/business/edit-coupon/${item.id}` as any);
+                      }}
+                    >
+                      <Edit3 size={18} color={Colors.primary} />
+                      <Text style={styles.editButtonText}>Edit Coupon</Text>
+                    </TouchableOpacity>
                   </View>
 
                   <TouchableOpacity
@@ -805,5 +819,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700' as const,
     color: '#dc2626',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 8,
+  },
+  editButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    backgroundColor: `${Colors.primary}15`,
+  },
+  editButtonText: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: Colors.primary,
   },
 });
