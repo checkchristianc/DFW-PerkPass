@@ -56,7 +56,7 @@ export default function BusinessLoginScreen() {
         subscriptionActive: true,
       };
       login(user);
-      router.replace('/business/dashboard');
+      router.replace('/(business-tabs)/dashboard');
     }
   };
 
