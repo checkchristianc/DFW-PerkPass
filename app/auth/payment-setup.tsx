@@ -59,6 +59,11 @@ export default function PaymentSetupScreen() {
   const handleSetupPayment = async () => {
     console.log('Opening Stripe payment link');
 
+    if (!businessData.businessName || !businessData.email) {
+      console.error('Missing business data');
+      return;
+    }
+
     try {
       const canOpen = await Linking.canOpenURL(STRIPE_PAYMENT_LINK);
       
@@ -300,7 +305,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-
   submitButtonText: {
     color: Colors.accent,
     fontSize: 16,
