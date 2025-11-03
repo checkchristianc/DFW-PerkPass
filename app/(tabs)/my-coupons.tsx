@@ -87,8 +87,15 @@ export default function MyCouponsScreen() {
   const insets = useSafeAreaInsets();
   const [expandedCouponId, setExpandedCouponId] = useState<string | null>(null);
 
+  const businessCoupons = useMemo(() => {
+    if (!user?.businessName) return [];
+    
+    const allBusinessCoupons = [...couponContext.pendingCoupons, ...couponContext.allCoupons];
+    return allBusinessCoupons.filter(c => c.businessName === user.businessName);
+  }, [couponContext.pendingCoupons, couponContext.allCoupons, user?.businessName]);
+
   const redeemedCoupons = useMemo(() => {
-    if (!user) return [];
+    if (!user || user.businessName) return [];
 
     const userRedemptions = couponContext.redemptions.filter(r => !r.userId || r.userId === user.id);
 
@@ -140,8 +147,104 @@ export default function MyCouponsScreen() {
         <View style={styles.emptyContainer}>
           <Tag size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>Please log in</Text>
-          <Text style={styles.emptyText}>Log in to view your redeemed coupons</Text>
+          <Text style={styles.emptyText}>Log in to view your coupons</Text>
         </View>
+      </View>
+    );
+  }
+
+  if (user.businessName) {
+    if (businessCoupons.length === 0) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>My Coupons</Text>
+          </View>
+          <View style={styles.emptyContainer}>
+            <Tag size={64} color={Colors.textSecondary} />
+            <Text style={styles.emptyTitle}>No coupons created yet</Text>
+            <Text style={styles.emptyText}>
+              Go to the Business Dashboard to create your first coupon
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.container}>
+        <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
+          <Text style={styles.headerTitle}>My Coupons</Text>
+          <Text style={styles.headerSubtitle}>
+            {businessCoupons.length} {businessCoupons.length === 1 ? 'coupon' : 'coupons'} created
+          </Text>
+        </View>
+
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          {businessCoupons.map((item: any) => {
+            const stats = couponContext.getCouponStats(item.id);
+            const isPending = item.status === 'pending';
+
+            return (
+              <View
+                key={item.id}
+                style={[styles.businessCouponCard, isPending && styles.pendingCard]}
+              >
+                <View style={styles.cardHeader}>
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={styles.couponImage}
+                    resizeMode="cover"
+                  />
+                  {isPending && (
+                    <View style={styles.pendingBadge}>
+                      <Clock size={14} color="#fff" />
+                      <Text style={styles.pendingBadgeText}>PENDING REVIEW</Text>
+                    </View>
+                  )}
+                </View>
+
+                <View style={styles.cardContent}>
+                  <View style={styles.businessRow}>
+                    <Text style={styles.businessName}>{item.businessName}</Text>
+                    <View style={styles.discountBadge}>
+                      <Text style={styles.discountText}>{item.discount}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.couponTitle}>{item.title}</Text>
+                  <Text style={styles.couponDescription} numberOfLines={2}>{item.description}</Text>
+
+                  <View style={styles.statsRow}>
+                    <View style={styles.statItem}>
+                      <Text style={styles.statValue}>{stats.views}</Text>
+                      <Text style={styles.statLabel}>Views</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                      <Text style={styles.statValue}>{stats.redemptions}</Text>
+                      <Text style={styles.statLabel}>Redeemed</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                      <Text style={styles.statValue}>{stats.conversionRate}%</Text>
+                      <Text style={styles.statLabel}>Conv. Rate</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.metaRow}>
+                    <View style={styles.infoItem}>
+                      <Calendar size={12} color={Colors.textSecondary} />
+                      <Text style={styles.metaText}>
+                        Created {formatDate(item.submittedAt || new Date().toISOString())}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </ScrollView>
       </View>
     );
   }
@@ -544,5 +647,79 @@ const styles = StyleSheet.create({
     fontWeight: '700' as const,
     color: Colors.textPrimary,
     letterSpacing: 1,
+  },
+  businessCouponCard: {
+    backgroundColor: Colors.secondary,
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  pendingCard: {
+    opacity: 0.8,
+  },
+  pendingBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: 'rgba(251, 146, 60, 0.95)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  pendingBadgeText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700' as const,
+  },
+  couponDescription: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 12,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: Colors.border,
+  },
+  statValue: {
+    fontSize: 18,
+    fontWeight: '700' as const,
+    color: Colors.primary,
+    marginBottom: 2,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    fontWeight: '600' as const,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  metaText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
   },
 });
