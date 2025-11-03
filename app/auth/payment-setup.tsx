@@ -29,23 +29,47 @@ export default function PaymentSetupScreen() {
   }), [params.businessName, params.ownerName, params.email]);
 
   useEffect(() => {
-    const handleUrl = (event: { url: string }) => {
+    const handleUrl = async (event: { url: string }) => {
       console.log('Deep link received:', event.url);
       
       if (event.url.includes('payment-success') || event.url.includes('success=true')) {
-        console.log('Payment successful, logging in user');
+        console.log('Payment redirect received, verifying subscription...');
         
-        const user = {
-          id: Date.now().toString(),
-          email: businessData.email,
-          name: businessData.ownerName,
-          type: 'business' as const,
-          businessName: businessData.businessName,
-          subscriptionActive: true,
-        };
+        try {
+          const backendUrl = process.env.EXPO_PUBLIC_VERCEL_URL || 'http://localhost:3000';
+          const response = await fetch(
+            `${backendUrl}/api/check-subscription?email=${encodeURIComponent(businessData.email)}`
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to verify subscription');
+          }
+          
+          const data = await response.json();
+          console.log('Subscription status:', data);
+          
+          if (data.subscribed) {
+            console.log('Subscription verified, logging in user');
+            
+            const user = {
+              id: Date.now().toString(),
+              email: businessData.email,
+              name: businessData.ownerName,
+              type: 'business' as const,
+              businessName: businessData.businessName,
+              subscriptionActive: true,
+            };
 
-        login(user);
-        router.replace('/business/dashboard');
+            login(user);
+            router.replace('/business/dashboard');
+          } else {
+            console.error('Subscription not active yet');
+            alert('Subscription not active. Please try again or contact support.');
+          }
+        } catch (error) {
+          console.error('Error verifying subscription:', error);
+          alert('Error verifying payment. Please contact support.');
+        }
       }
     };
 

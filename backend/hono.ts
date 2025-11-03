@@ -6,6 +6,14 @@ import { createContext } from "./trpc/create-context";
 
 const app = new Hono();
 
+const subscriptions = new Map<string, {
+  customerId: string;
+  email: string;
+  subscriptionId: string;
+  status: string;
+  businessName?: string;
+}>();
+
 app.use("*", cors());
 
 app.use(
@@ -21,8 +29,91 @@ app.get("/", (c) => {
   return c.json({ status: "ok", message: "API is running" });
 });
 
+app.post("/stripe-webhook", async (c) => {
+  const body = await c.req.text();
+  const signature = c.req.header("stripe-signature");
+  
+  console.log("Webhook received");
+  
+  try {
+    const payload = JSON.parse(body);
+    const event = payload;
+    
+    console.log("Event type:", event.type);
+    
+    switch (event.type) {
+      case "checkout.session.completed":
+        const session = event.data.object;
+        console.log("Checkout session completed:", session.id);
+        
+        subscriptions.set(session.customer_email || session.id, {
+          customerId: session.customer,
+          email: session.customer_email || "",
+          subscriptionId: session.subscription || "",
+          status: "active",
+          businessName: session.metadata?.businessName,
+        });
+        
+        console.log("Subscription saved for:", session.customer_email);
+        break;
+        
+      case "customer.subscription.updated":
+        const subscription = event.data.object;
+        console.log("Subscription updated:", subscription.id, "Status:", subscription.status);
+        
+        for (const [email, data] of subscriptions.entries()) {
+          if (data.subscriptionId === subscription.id) {
+            subscriptions.set(email, { ...data, status: subscription.status });
+            console.log("Updated subscription status for:", email);
+            break;
+          }
+        }
+        break;
+        
+      case "customer.subscription.deleted":
+        const deletedSub = event.data.object;
+        console.log("Subscription deleted:", deletedSub.id);
+        
+        for (const [email, data] of subscriptions.entries()) {
+          if (data.subscriptionId === deletedSub.id) {
+            subscriptions.set(email, { ...data, status: "canceled" });
+            console.log("Marked subscription as canceled for:", email);
+            break;
+          }
+        }
+        break;
+    }
+    
+    return c.json({ received: true });
+  } catch (err) {
+    console.error("Webhook error:", err);
+    return c.json({ error: "Webhook processing failed" }, 400);
+  }
+});
+
+app.get("/check-subscription", (c) => {
+  const email = c.req.query("email");
+  
+  if (!email) {
+    return c.json({ error: "Email required" }, 400);
+  }
+  
+  const subscription = subscriptions.get(email);
+  
+  if (!subscription) {
+    return c.json({ subscribed: false });
+  }
+  
+  return c.json({
+    subscribed: subscription.status === "active",
+    status: subscription.status,
+    subscriptionId: subscription.subscriptionId,
+  });
+});
+
 app.get("/stripe-success", (c) => {
-  const deepLink = "rork-app://auth/payment-setup?success=true";
+  const email = c.req.query("email") || "";
+  const deepLink = `rork-app://auth/payment-setup?success=true&email=${encodeURIComponent(email)}`;
   
   return c.html(`
     <!DOCTYPE html>
