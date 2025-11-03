@@ -352,33 +352,52 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
   }, [redemptions, views]);
 
   const deleteCoupon = useCallback(async (couponId: string, businessName: string) => {
-    console.log('Deleting coupon:', couponId, 'for business:', businessName);
+    console.log('=== DELETE COUPON STARTING ===');
+    console.log('Coupon ID:', couponId);
+    console.log('Business Name:', businessName);
+    console.log('Current pending coupons:', pendingCoupons.length);
+    console.log('Current approved coupons:', approvedCoupons.length);
     
     try {
+      console.log('Calling backend delete mutation...');
       const result = await trpcClient.coupons.delete.mutate({ couponId, businessName });
+      console.log('Backend result:', JSON.stringify(result));
       
       if (result.success) {
+        console.log('Backend returned success, updating local state...');
+        
         setPendingCoupons(prev => {
+          console.log('Filtering pending coupons, before:', prev.length);
           const newPendingCoupons = prev.filter(c => c.id !== couponId);
+          console.log('After filter:', newPendingCoupons.length);
           mutatePendingCoupons(newPendingCoupons);
           return newPendingCoupons;
         });
         
         setApprovedCoupons(prev => {
+          console.log('Filtering approved coupons, before:', prev.length);
           const newApprovedCoupons = prev.filter(c => c.id !== couponId);
+          console.log('After filter:', newApprovedCoupons.length);
           mutateApprovedCoupons(newApprovedCoupons);
           return newApprovedCoupons;
         });
         
+        console.log('=== DELETE COUPON SUCCESS ===');
         return { success: true };
       }
       
+      console.log('Backend returned failure');
       return { success: false };
     } catch (error) {
-      console.log('Error deleting coupon:', error);
-      return { success: false };
+      console.error('=== DELETE COUPON ERROR ===');
+      console.error('Error details:', error);
+      if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      }
+      return { success: false, error: String(error) };
     }
-  }, [mutatePendingCoupons, mutateApprovedCoupons]);
+  }, [mutatePendingCoupons, mutateApprovedCoupons, pendingCoupons.length, approvedCoupons.length]);
 
   return useMemo(() => ({
     coupons: filteredCoupons,
