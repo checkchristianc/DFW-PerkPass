@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { router, useLocalSearchParams } from 'expo-router';
-import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2, Ticket } from 'lucide-react-native';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
+import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2, Ticket, ArrowLeft } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -96,7 +96,22 @@ export default function CouponDetailScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: 'Coupon Details',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={styles.headerBackButton}
+            >
+              <ArrowLeft size={24} color={Colors.textPrimary} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: coupon.imageUrl }}
@@ -222,6 +237,7 @@ export default function CouponDetailScreen() {
         <View style={styles.bottomSpacer} />
       </View>
     </ScrollView>
+    </>
   );
 }
 
@@ -522,5 +538,9 @@ const styles = StyleSheet.create({
     width: 1,
     height: 40,
     backgroundColor: Colors.border,
+  },
+  headerBackButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
 });
