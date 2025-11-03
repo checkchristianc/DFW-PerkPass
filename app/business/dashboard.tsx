@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, BarChart3 } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -75,6 +75,40 @@ export default function BusinessDashboard() {
   const removeImage = () => {
     console.log('Removing image');
     setFormData({ ...formData, imageUrl: '' });
+  };
+
+  const handleCancelMembership = () => {
+    Alert.alert(
+      'Cancel Membership',
+      'Are you sure you want to cancel your subscription? You will lose access to creating new coupons at the end of your billing period.',
+      [
+        {
+          text: 'Keep Subscription',
+          style: 'cancel',
+        },
+        {
+          text: 'Cancel Subscription',
+          style: 'destructive',
+          onPress: () => {
+            console.log('Canceling subscription for user:', user?.email);
+            console.log('Would cancel Stripe subscription here in production');
+            
+            Alert.alert(
+              'Subscription Cancelled',
+              'Your subscription has been cancelled and will remain active until the end of your current billing period. You can resubscribe at any time.',
+              [
+                { 
+                  text: 'OK',
+                  onPress: () => {
+                    console.log('User acknowledged cancellation');
+                  }
+                }
+              ]
+            );
+          },
+        },
+      ]
+    );
   };
 
   const handleSubmit = () => {
@@ -307,6 +341,41 @@ export default function BusinessDashboard() {
               </TouchableOpacity>
             </View>
           </View>
+
+          <View style={styles.settingsSection}>
+            <View style={styles.sectionHeader}>
+              <Settings size={24} color={Colors.primary} />
+              <Text style={styles.sectionTitle}>Account Settings</Text>
+            </View>
+
+            <View style={styles.settingsCard}>
+              <View style={styles.settingItem}>
+                <View style={styles.settingIcon}>
+                  <AlertCircle size={20} color={Colors.danger} />
+                </View>
+                <View style={styles.settingContent}>
+                  <Text style={styles.settingTitle}>Cancel Membership</Text>
+                  <Text style={styles.settingDescription}>
+                    Cancel your subscription and stop future billing
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={handleCancelMembership}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.cancelButtonText}>Cancel Subscription</Text>
+              </TouchableOpacity>
+
+              <View style={styles.cancelInfo}>
+                <Text style={styles.cancelInfoText}>
+                  ⚠️ Your subscription will remain active until the end of your current billing period.
+                  You can resubscribe at any time.
+                </Text>
+              </View>
+            </View>
+          </View>
         </ScrollView>
       </View>
     </>
@@ -511,5 +580,69 @@ const styles = StyleSheet.create({
     height: 32,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  settingsSection: {
+    margin: 16,
+    marginTop: 8,
+  },
+  settingsCard: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  settingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: `${Colors.danger}15`,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingContent: {
+    flex: 1,
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  settingDescription: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    lineHeight: 18,
+  },
+  cancelButton: {
+    backgroundColor: Colors.danger,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 15,
+    fontWeight: '700' as const,
+    color: Colors.card,
+  },
+  cancelInfo: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: `${Colors.danger}10`,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: `${Colors.danger}30`,
+  },
+  cancelInfoText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    lineHeight: 18,
   },
 });

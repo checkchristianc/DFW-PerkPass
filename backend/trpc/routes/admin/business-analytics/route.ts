@@ -1,7 +1,8 @@
 import { publicProcedure } from "../../../create-context";
 
 export const getBusinessAnalyticsProcedure = publicProcedure.query(async () => {
-  console.log('Getting business analytics');
+  try {
+    console.log('Getting business analytics');
   
   const mockBusinesses = [
     {
@@ -77,15 +78,22 @@ export const getBusinessAnalyticsProcedure = publicProcedure.query(async () => {
     avgRedemptionsPerBusiness,
   });
 
-  return {
-    totalBusinesses,
-    activeSubscriptions,
-    totalRevenue,
-    totalCoupons,
-    totalRedemptions,
-    avgRedemptionsPerBusiness,
-    businesses: mockBusinesses,
-  };
+    const response = {
+      totalBusinesses,
+      activeSubscriptions,
+      totalRevenue,
+      totalCoupons,
+      totalRedemptions,
+      avgRedemptionsPerBusiness,
+      businesses: mockBusinesses,
+    };
+
+    console.log('Returning analytics response');
+    return response;
+  } catch (error) {
+    console.error('Error in business analytics:', error);
+    throw new Error('Failed to fetch business analytics');
+  }
 });
 
 export default getBusinessAnalyticsProcedure;
