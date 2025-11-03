@@ -1,8 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle } from 'lucide-react-native';
-import { useState } from 'react';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle } from 'lucide-react-native';
+import { useState, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -22,10 +22,19 @@ import { Category } from '@/types/coupon';
 
 export default function BusinessDashboard() {
   const { user, logout } = useAuth();
-  const { submitCoupon } = useCoupons();
+  const { submitCoupon, pendingCoupons, coupons } = useCoupons();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
+  const businessCoupons = useMemo(() => {
+    const userBusinessName = user?.businessName;
+    if (!userBusinessName) return [];
+    
+    const allCoupons = [...pendingCoupons, ...coupons];
+    return allCoupons.filter(c => c.businessName === userBusinessName);
+  }, [pendingCoupons, coupons, user?.businessName]);
+
+  const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -142,7 +151,23 @@ export default function BusinessDashboard() {
             });
           },
         },
-        { text: 'OK' },
+        { 
+          text: 'OK',
+          onPress: () => {
+            setShowAddForm(false);
+            setFormData({
+              title: '',
+              description: '',
+              discount: '',
+              category: 'Food & Dining',
+              expiresAt: '',
+              code: '',
+              terms: '',
+              redemptionInstructions: '',
+              imageUrl: '',
+            });
+          }
+        },
       ]
     );
   };
@@ -191,7 +216,69 @@ export default function BusinessDashboard() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.createSection}>
+          <View style={styles.myCouponsSection}>
+            <View style={styles.sectionHeader}>
+              <Store size={24} color={Colors.primary} />
+              <Text style={styles.sectionTitle}>My Coupons</Text>
+              <View style={styles.couponCount}>
+                <Text style={styles.couponCountText}>{businessCoupons.length}</Text>
+              </View>
+            </View>
+
+            {businessCoupons.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Store size={48} color={Colors.textSecondary} strokeWidth={1.5} />
+                <Text style={styles.emptyStateTitle}>No coupons yet</Text>
+                <Text style={styles.emptyStateText}>Create your first coupon to start attracting customers</Text>
+              </View>
+            ) : (
+              <View style={styles.couponsList}>
+                {businessCoupons.map((coupon) => (
+                  <View key={coupon.id} style={styles.couponItem}>
+                    <Image
+                      source={{ uri: coupon.imageUrl }}
+                      style={styles.couponThumbnail}
+                      contentFit="cover"
+                    />
+                    <View style={styles.couponDetails}>
+                      <View style={styles.couponStatus}>
+                        {coupon.status === 'pending' ? (
+                          <View style={styles.statusBadgePending}>
+                            <Clock size={12} color={Colors.warning} />
+                            <Text style={styles.statusTextPending}>Pending Review</Text>
+                          </View>
+                        ) : (
+                          <View style={styles.statusBadgeApproved}>
+                            <CheckCircle size={12} color={Colors.success} />
+                            <Text style={styles.statusTextApproved}>Active</Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text style={styles.couponItemTitle} numberOfLines={1}>{coupon.title}</Text>
+                      <Text style={styles.couponItemDiscount}>{coupon.discount}</Text>
+                      <Text style={styles.couponItemCategory}>{coupon.category}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+
+          <View style={styles.addCouponSection}>
+            {!showAddForm ? (
+              <TouchableOpacity 
+                style={styles.addCouponButton}
+                onPress={() => setShowAddForm(true)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.addButtonIcon}>
+                  <Plus size={32} color={Colors.accent} strokeWidth={3} />
+                </View>
+                <Text style={styles.addCouponButtonText}>Add New Coupon</Text>
+                <Text style={styles.addCouponButtonSubtext}>Create a new offer for your customers</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.createSection}>
             <View style={styles.sectionHeader}>
               <Plus size={24} color={Colors.primary} />
               <Text style={styles.sectionTitle}>Create New Coupon</Text>
@@ -335,11 +422,34 @@ export default function BusinessDashboard() {
                 />
               </View>
 
-              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Plus size={20} color={Colors.accent} />
-                <Text style={styles.submitButtonText}>Create Coupon</Text>
-              </TouchableOpacity>
+              <View style={styles.formActions}>
+                <TouchableOpacity 
+                  style={styles.cancelFormButton} 
+                  onPress={() => {
+                    setShowAddForm(false);
+                    setFormData({
+                      title: '',
+                      description: '',
+                      discount: '',
+                      category: 'Food & Dining',
+                      expiresAt: '',
+                      code: '',
+                      terms: '',
+                      redemptionInstructions: '',
+                      imageUrl: '',
+                    });
+                  }}
+                >
+                  <Text style={styles.cancelFormButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                  <Plus size={20} color={Colors.accent} />
+                  <Text style={styles.submitButtonText}>Create Coupon</Text>
+                </TouchableOpacity>
+              </View>
             </View>
+          </View>
+            )}
           </View>
 
           <View style={styles.settingsSection}>
@@ -453,7 +563,6 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
   createSection: {
-    margin: 16,
     backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 20,
@@ -524,6 +633,7 @@ const styles = StyleSheet.create({
     fontWeight: '600' as const,
   },
   submitButton: {
+    flex: 1,
     backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -531,7 +641,6 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 16,
     borderRadius: 12,
-    marginTop: 8,
   },
   submitButtonText: {
     fontSize: 17,
@@ -644,5 +753,160 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     lineHeight: 18,
+  },
+  myCouponsSection: {
+    margin: 16,
+    marginBottom: 8,
+  },
+  couponCount: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 'auto' as const,
+  },
+  couponCountText: {
+    fontSize: 14,
+    fontWeight: '700' as const,
+    color: Colors.accent,
+  },
+  emptyState: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 48,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderStyle: 'dashed' as const,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '700' as const,
+    color: Colors.textPrimary,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    textAlign: 'center' as const,
+    lineHeight: 20,
+  },
+  couponsList: {
+    gap: 12,
+  },
+  couponItem: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 12,
+    flexDirection: 'row',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  couponThumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 12,
+  },
+  couponDetails: {
+    flex: 1,
+    gap: 4,
+  },
+  couponStatus: {
+    marginBottom: 4,
+  },
+  statusBadgePending: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: `${Colors.warning}20`,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    alignSelf: 'flex-start' as const,
+  },
+  statusTextPending: {
+    fontSize: 11,
+    fontWeight: '600' as const,
+    color: Colors.warning,
+  },
+  statusBadgeApproved: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: `${Colors.success}20`,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    alignSelf: 'flex-start' as const,
+  },
+  statusTextApproved: {
+    fontSize: 11,
+    fontWeight: '600' as const,
+    color: Colors.success,
+  },
+  couponItemTitle: {
+    fontSize: 16,
+    fontWeight: '700' as const,
+    color: Colors.textPrimary,
+  },
+  couponItemDiscount: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+    color: Colors.primary,
+  },
+  couponItemCategory: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+  },
+  addCouponSection: {
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  addCouponButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 16,
+    padding: 32,
+    alignItems: 'center',
+    gap: 12,
+  },
+  addButtonIcon: {
+    backgroundColor: Colors.accent,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addCouponButtonText: {
+    fontSize: 22,
+    fontWeight: '700' as const,
+    color: Colors.accent,
+  },
+  addCouponButtonSubtext: {
+    fontSize: 14,
+    color: Colors.accent,
+    opacity: 0.8,
+    textAlign: 'center' as const,
+  },
+  formActions: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
+  },
+  cancelFormButton: {
+    flex: 1,
+    backgroundColor: Colors.background,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  cancelFormButtonText: {
+    fontSize: 17,
+    fontWeight: '600' as const,
+    color: Colors.textPrimary,
   },
 });
