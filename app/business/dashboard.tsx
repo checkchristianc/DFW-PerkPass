@@ -1,5 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
-import { Plus, LogOut, Store } from 'lucide-react-native';
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
+import { Plus, LogOut, Store, ImagePlus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -33,6 +35,7 @@ export default function BusinessDashboard() {
     code: '',
     terms: '',
     redemptionInstructions: '',
+    imageUrl: '',
   });
 
   const categories: Category[] = [
@@ -45,6 +48,34 @@ export default function BusinessDashboard() {
     'Fitness',
     'Electronics',
   ];
+
+  const pickImage = async () => {
+    console.log('Requesting media library permissions');
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Please allow access to your photos to upload a coupon image.');
+      return;
+    }
+
+    console.log('Launching image picker');
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      console.log('Image selected:', result.assets[0].uri);
+      setFormData({ ...formData, imageUrl: result.assets[0].uri });
+    }
+  };
+
+  const removeImage = () => {
+    console.log('Removing image');
+    setFormData({ ...formData, imageUrl: '' });
+  };
 
   const handleSubmit = () => {
     if (!formData.title || !formData.description || !formData.discount) {
@@ -73,6 +104,7 @@ export default function BusinessDashboard() {
               code: '',
               terms: '',
               redemptionInstructions: '',
+              imageUrl: '',
             });
           },
         },
@@ -158,6 +190,34 @@ export default function BusinessDashboard() {
                   value={formData.discount}
                   onChangeText={(text) => setFormData({ ...formData, discount: text })}
                 />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Coupon Image (Optional)</Text>
+                {formData.imageUrl ? (
+                  <View style={styles.imagePreviewContainer}>
+                    <Image
+                      source={{ uri: formData.imageUrl }}
+                      style={styles.imagePreview}
+                      contentFit="cover"
+                    />
+                    <TouchableOpacity
+                      style={styles.removeImageButton}
+                      onPress={removeImage}
+                    >
+                      <X size={18} color={Colors.card} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.imagePickerButton}
+                    onPress={pickImage}
+                  >
+                    <ImagePlus size={32} color={Colors.textSecondary} />
+                    <Text style={styles.imagePickerText}>Tap to upload image</Text>
+                    <Text style={styles.imagePickerHint}>Recommended: 16:9 aspect ratio</Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
               <View style={styles.inputGroup}>
@@ -391,5 +451,48 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700' as const,
     color: Colors.accent,
+  },
+  imagePickerButton: {
+    backgroundColor: Colors.background,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    borderStyle: 'dashed' as const,
+    borderRadius: 12,
+    paddingVertical: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  imagePickerText: {
+    fontSize: 15,
+    fontWeight: '600' as const,
+    color: Colors.textPrimary,
+    marginTop: 8,
+  },
+  imagePickerHint: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+  },
+  imagePreviewContainer: {
+    position: 'relative' as const,
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+  },
+  removeImageButton: {
+    position: 'absolute' as const,
+    top: 12,
+    right: 12,
+    backgroundColor: Colors.danger,
+    borderRadius: 20,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

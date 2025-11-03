@@ -195,6 +195,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     terms?: string;
     redemptionInstructions?: string;
     businessName: string;
+    imageUrl?: string;
   }) => {
     const newCoupon = {
       id: `coupon-${Date.now()}`,
@@ -206,7 +207,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       expiresAt: couponData.expiresAt || 'No expiration',
       code: couponData.code,
       terms: couponData.terms,
-      imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
+      imageUrl: couponData.imageUrl || 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
       isFeatured: false,
       redemptionInstructions: couponData.redemptionInstructions || 'Show this coupon at checkout',
       status: 'pending' as CouponStatus,
