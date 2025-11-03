@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   categoryScroll: {
     marginTop: 12,
-    marginBottom: 8,
+    marginBottom: 0,
   },
   categoryScrollContent: {
     paddingHorizontal: 16,
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
   },
   resultsHeader: {
     paddingHorizontal: 20,
+    marginTop: 8,
     marginBottom: 8,
   },
   resultsText: {
