@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle, RefreshCw } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle, RefreshCw, User } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
 import {
   StyleSheet,
@@ -193,6 +193,12 @@ export default function BusinessDashboard() {
               </View>
             </View>
             <View style={styles.headerActions}>
+              <TouchableOpacity 
+                onPress={() => router.push('/business/profile')}
+                style={styles.analyticsButton}
+              >
+                <User size={18} color={Colors.accent} />
+              </TouchableOpacity>
               <TouchableOpacity 
                 onPress={() => router.push('/business/analytics')}
                 style={styles.analyticsButton}
