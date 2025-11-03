@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
-import { Shield, CheckCircle, XCircle, Clock, LogOut } from 'lucide-react-native';
+import { Shield, CheckCircle, XCircle, Clock, LogOut, BarChart3 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -135,16 +135,24 @@ export default function AdminReviewScreen() {
                 <Text style={styles.headerSubtitle}>Review pending coupons</Text>
               </View>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                logout();
-                router.replace('/auth/welcome');
-              }}
-              style={styles.logoutButton}
-            >
-              <LogOut size={18} color={Colors.accent} />
-              <Text style={styles.logoutButtonText}>Logout</Text>
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity
+                onPress={() => router.push('/admin/analytics')}
+                style={styles.analyticsButton}
+              >
+                <BarChart3 size={18} color={Colors.accent} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  logout();
+                  router.replace('/auth/welcome');
+                }}
+                style={styles.logoutButton}
+              >
+                <LogOut size={18} color={Colors.accent} />
+                <Text style={styles.logoutButtonText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -307,6 +315,19 @@ const styles = StyleSheet.create({
     color: Colors.accent,
     opacity: 0.8,
     marginTop: 2,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  analyticsButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: `${Colors.primary}25`,
+    borderRadius: 8,
   },
   logoutButton: {
     flexDirection: 'row',
