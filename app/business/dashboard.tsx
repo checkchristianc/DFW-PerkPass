@@ -22,7 +22,7 @@ import { Category } from '@/types/coupon';
 
 export default function BusinessDashboard() {
   const { user, logout } = useAuth();
-  const { submitCoupon, pendingCoupons, allCoupons } = useCoupons();
+  const { submitCoupon, pendingCoupons, allCoupons, deleteCoupon } = useCoupons();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -258,6 +258,36 @@ export default function BusinessDashboard() {
                       <Text style={styles.couponItemDiscount}>{coupon.discount}</Text>
                       <Text style={styles.couponItemCategory}>{coupon.category}</Text>
                     </View>
+                    <TouchableOpacity
+                      style={styles.removeCouponButton}
+                      onPress={() => {
+                        Alert.alert(
+                          'Delete Coupon',
+                          `Are you sure you want to delete "${coupon.title}"? This action cannot be undone.`,
+                          [
+                            {
+                              text: 'Cancel',
+                              style: 'cancel',
+                            },
+                            {
+                              text: 'Delete',
+                              style: 'destructive',
+                              onPress: async () => {
+                                console.log('Deleting coupon:', coupon.id);
+                                const result = await deleteCoupon(coupon.id, user?.businessName || '');
+                                if (result.success) {
+                                  Alert.alert('Success', 'Coupon deleted successfully');
+                                } else {
+                                  Alert.alert('Error', 'Failed to delete coupon');
+                                }
+                              },
+                            },
+                          ]
+                        );
+                      }}
+                    >
+                      <X size={18} color={Colors.danger} />
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
@@ -859,6 +889,22 @@ const styles = StyleSheet.create({
   couponItemCategory: {
     fontSize: 12,
     color: Colors.textSecondary,
+  },
+  removeCouponButton: {
+    position: 'absolute' as const,
+    top: 8,
+    right: 8,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   addCouponSection: {
     marginHorizontal: 16,
