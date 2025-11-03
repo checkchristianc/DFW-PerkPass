@@ -7,7 +7,7 @@ import { StyleSheet } from "react-native";
 
 import { CouponProvider } from "@/contexts/CouponContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { trpc, trpcReactClient } from "@/lib/trpc";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -73,7 +73,7 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
         <AuthProvider>
           <CouponProvider>
             <GestureHandlerRootView style={styles.container}>
