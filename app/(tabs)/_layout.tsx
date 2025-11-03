@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Grid3x3, Heart } from "lucide-react-native";
+import { Home, Grid3x3, Heart, Ticket } from "lucide-react-native";
 import React from "react";
 
 import Colors from "@/constants/colors";
@@ -41,6 +41,13 @@ export default function TabLayout() {
         options={{
           title: "Saved",
           tabBarIcon: ({ color }) => <Heart size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="my-coupons"
+        options={{
+          title: "My Coupons",
+          tabBarIcon: ({ color }) => <Ticket size={24} color={color} />,
         }}
       />
     </Tabs>
