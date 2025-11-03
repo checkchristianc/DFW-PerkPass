@@ -1,7 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
 import { Search, Sparkles, LogOut, Briefcase, Shield } from 'lucide-react-native';
-import { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -23,12 +22,7 @@ export default function HomeScreen() {
   const { coupons, featuredCoupons, searchQuery, setSearchQuery } = useCoupons();
   const { logout } = useAuth();
   const router = useRouter();
-  const [localSearch, setLocalSearch] = useState<string>(searchQuery);
   const insets = useSafeAreaInsets();
-
-  const handleSearchSubmit = () => {
-    setSearchQuery(localSearch);
-  };
 
   const displayCoupons = searchQuery.trim() ? coupons : featuredCoupons;
 
@@ -87,17 +81,13 @@ export default function HomeScreen() {
               style={styles.searchInput}
               placeholder="Search coupons, businesses..."
               placeholderTextColor={Colors.textSecondary}
-              value={localSearch}
-              onChangeText={setLocalSearch}
-              onSubmitEditing={handleSearchSubmit}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
               returnKeyType="search"
             />
-            {localSearch.length > 0 && (
+            {searchQuery.length > 0 && (
               <TouchableOpacity
-                onPress={() => {
-                  setLocalSearch('');
-                  setSearchQuery('');
-                }}
+                onPress={() => setSearchQuery('')}
                 style={styles.clearButton}
               >
                 <Text style={styles.clearText}>Clear</Text>
