@@ -11,10 +11,15 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.tabIconDefault,
         headerShown: false,
+        tabBarPosition: "bottom",
         tabBarStyle: {
           backgroundColor: Colors.secondary,
           borderTopColor: Colors.secondary,
           borderTopWidth: 1,
+          position: 'absolute' as const,
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
         tabBarLabelStyle: {
           fontSize: 12,
