@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3 } from 'lucide-react-native';
 import { useState } from 'react';
 import {
   StyleSheet,
@@ -132,16 +132,23 @@ export default function BusinessDashboard() {
                 <Text style={styles.businessName}>{user?.businessName || 'My Business'}</Text>
               </View>
             </View>
-            <TouchableOpacity 
-              onPress={() => {
-                logout();
-                router.replace('/auth/welcome');
-              }}
-              style={styles.logoutButton}
-            >
-              <LogOut size={18} color={Colors.accent} />
-              <Text style={styles.logoutButtonText}>Logout</Text>
-            </TouchableOpacity>
+            <View style={styles.headerActions}>
+              <TouchableOpacity 
+                onPress={() => router.push('/business/analytics')}
+                style={styles.analyticsButton}
+              >
+                <BarChart3 size={18} color={Colors.accent} />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => {
+                  logout();
+                  router.replace('/auth/welcome');
+                }}
+                style={styles.logoutButton}
+              >
+                <LogOut size={18} color={Colors.accent} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
 
@@ -335,6 +342,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     flex: 1,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  analyticsButton: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: `${Colors.primary}25`,
   },
   iconBadge: {
     backgroundColor: Colors.primary,

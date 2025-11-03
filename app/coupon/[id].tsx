@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2 } from 'lucide-react-native';
-import { useState } from 'react';
+import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2, Ticket } from 'lucide-react-native';
+import { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,10 +19,19 @@ import { MOCK_COUPONS } from '@/mocks/coupons';
 
 export default function CouponDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { toggleFavorite, isFavorite } = useCoupons();
+  const { toggleFavorite, isFavorite, redeemCoupon, trackView, getCouponStats } = useCoupons();
   const [copied, setCopied] = useState<boolean>(false);
+  const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
+  const [hasRedeemed, setHasRedeemed] = useState<boolean>(false);
 
   const coupon = MOCK_COUPONS.find((c) => c.id === id);
+
+  useEffect(() => {
+    if (id) {
+      console.log('Tracking view for coupon:', id);
+      trackView(id);
+    }
+  }, [id, trackView]);
 
   if (!coupon) {
     return (
@@ -52,6 +61,30 @@ export default function CouponDetailScreen() {
   const handleFavoritePress = () => {
     toggleFavorite(coupon.id);
   };
+
+  const handleRedeem = async () => {
+    if (hasRedeemed) {
+      Alert.alert('Already Redeemed', 'You have already redeemed this coupon!');
+      return;
+    }
+
+    setIsRedeeming(true);
+    const result = await redeemCoupon(coupon.id);
+    setIsRedeeming(false);
+
+    if (result.success) {
+      setHasRedeemed(true);
+      Alert.alert(
+        'Coupon Redeemed!',
+        'Your coupon has been successfully redeemed. Show this to the cashier.',
+        [{ text: 'OK' }]
+      );
+    } else {
+      Alert.alert('Error', 'Failed to redeem coupon. Please try again.');
+    }
+  };
+
+  const stats = getCouponStats(coupon.id);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -154,6 +187,37 @@ export default function CouponDetailScreen() {
             <Text style={styles.termsText}>{coupon.terms}</Text>
           </View>
         )}
+
+        <TouchableOpacity
+          style={[
+            styles.redeemButton,
+            (hasRedeemed || isRedeeming) && styles.redeemButtonDisabled,
+          ]}
+          onPress={handleRedeem}
+          disabled={hasRedeemed || isRedeeming}
+        >
+          <Ticket size={20} color={Colors.card} />
+          <Text style={styles.redeemButtonText}>
+            {hasRedeemed ? 'Redeemed' : isRedeeming ? 'Redeeming...' : 'Redeem Coupon'}
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.statsSection}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats.views}</Text>
+            <Text style={styles.statLabel}>Views</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats.redemptions}</Text>
+            <Text style={styles.statLabel}>Redemptions</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{stats.conversionRate}%</Text>
+            <Text style={styles.statLabel}>Conversion</Text>
+          </View>
+        </View>
 
         <View style={styles.bottomSpacer} />
       </View>
@@ -389,5 +453,74 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 40,
+  },
+  redeemButton: {
+    backgroundColor: Colors.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 18,
+    borderRadius: 12,
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  redeemButtonDisabled: {
+    backgroundColor: Colors.textSecondary,
+    opacity: 0.6,
+  },
+  redeemButtonText: {
+    fontSize: 17,
+    fontWeight: '700' as const,
+    color: Colors.card,
+  },
+  statsSection: {
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: '800' as const,
+    color: Colors.primary,
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    fontWeight: '600' as const,
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: Colors.border,
   },
 });

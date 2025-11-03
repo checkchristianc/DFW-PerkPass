@@ -13,6 +13,7 @@ export type CouponStatus = 'pending' | 'approved' | 'denied';
 export interface Coupon {
   id: string;
   businessName: string;
+  businessId?: string;
   title: string;
   description: string;
   discount: string;
@@ -26,4 +27,24 @@ export interface Coupon {
   status: CouponStatus;
   submittedAt: string;
   reviewedAt?: string;
+  totalRedemptions?: number;
+  viewCount?: number;
+}
+
+export interface CouponRedemption {
+  id: string;
+  couponId: string;
+  userId?: string;
+  redeemedAt: string;
+  deviceInfo?: string;
+}
+
+export interface CouponAnalytics {
+  couponId: string;
+  title: string;
+  totalViews: number;
+  totalRedemptions: number;
+  conversionRate: number;
+  lastRedeemedAt?: string;
+  redemptionsByDate: { date: string; count: number }[];
 }

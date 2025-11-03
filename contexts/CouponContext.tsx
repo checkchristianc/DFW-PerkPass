@@ -4,11 +4,14 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { MOCK_COUPONS, MOCK_PENDING_COUPONS } from '@/mocks/coupons';
-import { Category, CouponStatus } from '@/types/coupon';
+import { Category, CouponStatus, CouponRedemption } from '@/types/coupon';
+import { trpcClient } from '@/lib/trpc';
 
 const FAVORITES_KEY = 'coupon_favorites';
 const APPROVED_COUPONS_KEY = 'approved_coupons';
 const PENDING_COUPONS_KEY = 'pending_coupons';
+const REDEMPTIONS_KEY = 'coupon_redemptions';
+const VIEWS_KEY = 'coupon_views';
 
 export const [CouponProvider, useCoupons] = createContextHook(() => {
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -16,6 +19,8 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [pendingCoupons, setPendingCoupons] = useState(MOCK_PENDING_COUPONS);
   const [approvedCoupons, setApprovedCoupons] = useState<any[]>([]);
+  const [redemptions, setRedemptions] = useState<CouponRedemption[]>([]);
+  const [views, setViews] = useState<Record<string, number>>({});
 
   const favoritesQuery = useQuery({
     queryKey: ['favorites'],
@@ -59,6 +64,34 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     }
   });
 
+  const redemptionsQuery = useQuery({
+    queryKey: ['redemptions'],
+    queryFn: async () => {
+      try {
+        const stored = await AsyncStorage.getItem(REDEMPTIONS_KEY);
+        if (!stored) return [];
+        return JSON.parse(stored);
+      } catch (error) {
+        console.log('Error loading redemptions:', error);
+        return [];
+      }
+    }
+  });
+
+  const viewsQuery = useQuery({
+    queryKey: ['views'],
+    queryFn: async () => {
+      try {
+        const stored = await AsyncStorage.getItem(VIEWS_KEY);
+        if (!stored) return {};
+        return JSON.parse(stored);
+      } catch (error) {
+        console.log('Error loading views:', error);
+        return {};
+      }
+    }
+  });
+
   const saveFavoritesMutation = useMutation({
     mutationFn: async (newFavorites: string[]) => {
       await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites));
@@ -80,9 +113,25 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     }
   });
 
+  const saveRedemptionsMutation = useMutation({
+    mutationFn: async (newRedemptions: CouponRedemption[]) => {
+      await AsyncStorage.setItem(REDEMPTIONS_KEY, JSON.stringify(newRedemptions));
+      return newRedemptions;
+    }
+  });
+
+  const saveViewsMutation = useMutation({
+    mutationFn: async (newViews: Record<string, number>) => {
+      await AsyncStorage.setItem(VIEWS_KEY, JSON.stringify(newViews));
+      return newViews;
+    }
+  });
+
   const { mutate: mutateFavorites } = saveFavoritesMutation;
   const { mutate: mutateApprovedCoupons } = saveApprovedCouponsMutation;
   const { mutate: mutatePendingCoupons } = savePendingCouponsMutation;
+  const { mutate: mutateRedemptions } = saveRedemptionsMutation;
+  const { mutate: mutateViews } = saveViewsMutation;
 
   useEffect(() => {
     if (favoritesQuery.data) {
@@ -101,6 +150,18 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       setPendingCoupons(pendingCouponsQuery.data);
     }
   }, [pendingCouponsQuery.data]);
+
+  useEffect(() => {
+    if (redemptionsQuery.data) {
+      setRedemptions(redemptionsQuery.data);
+    }
+  }, [redemptionsQuery.data]);
+
+  useEffect(() => {
+    if (viewsQuery.data) {
+      setViews(viewsQuery.data);
+    }
+  }, [viewsQuery.data]);
 
   const toggleFavorite = useCallback((couponId: string) => {
     const newFavorites = favorites.includes(couponId)
@@ -212,6 +273,8 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       redemptionInstructions: couponData.redemptionInstructions || 'Show this coupon at checkout',
       status: 'pending' as CouponStatus,
       submittedAt: new Date().toISOString(),
+      totalRedemptions: 0,
+      viewCount: 0,
     };
     
     console.log('Submitting new coupon:', newCoupon);
@@ -219,6 +282,60 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     setPendingCoupons(newPendingCoupons);
     mutatePendingCoupons(newPendingCoupons);
   }, [pendingCoupons, mutatePendingCoupons]);
+
+  const redeemCoupon = useCallback(async (couponId: string, userId?: string) => {
+    console.log('Redeeming coupon:', couponId);
+    
+    try {
+      const result = await trpcClient.coupons.redeem.mutate({ couponId, userId });
+      
+      if (result.success) {
+        const newRedemption: CouponRedemption = {
+          id: result.redemption.id,
+          couponId,
+          userId,
+          redeemedAt: result.redemption.redeemedAt,
+        };
+        
+        const newRedemptions = [...redemptions, newRedemption];
+        setRedemptions(newRedemptions);
+        mutateRedemptions(newRedemptions);
+        
+        return { success: true };
+      }
+      
+      return { success: false };
+    } catch (error) {
+      console.log('Error redeeming coupon:', error);
+      return { success: false };
+    }
+  }, [redemptions, mutateRedemptions]);
+
+  const trackView = useCallback(async (couponId: string) => {
+    console.log('Tracking view for coupon:', couponId);
+    
+    const newViews = { ...views, [couponId]: (views[couponId] || 0) + 1 };
+    setViews(newViews);
+    mutateViews(newViews);
+    
+    try {
+      await trpcClient.coupons.trackView.mutate({ couponId });
+    } catch (error) {
+      console.log('Error tracking view:', error);
+    }
+  }, [views, mutateViews]);
+
+  const getCouponStats = useCallback((couponId: string) => {
+    const redemptionCount = redemptions.filter(r => r.couponId === couponId).length;
+    const viewCount = views[couponId] || 0;
+    const conversionRate = viewCount > 0 ? (redemptionCount / viewCount) * 100 : 0;
+    
+    return {
+      views: viewCount,
+      redemptions: redemptionCount,
+      conversionRate: conversionRate.toFixed(1),
+    };
+  }, [redemptions, views]);
 
   return useMemo(() => ({
     coupons: filteredCoupons,
@@ -237,6 +354,11 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     approveCoupon,
     denyCoupon,
     submitCoupon,
+    redeemCoupon,
+    trackView,
+    getCouponStats,
+    redemptions,
+    views,
   }), [
     filteredCoupons,
     featuredCoupons,
@@ -256,5 +378,10 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     approveCoupon,
     denyCoupon,
     submitCoupon,
+    redeemCoupon,
+    trackView,
+    getCouponStats,
+    redemptions,
+    views,
   ]);
 });
