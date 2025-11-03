@@ -92,7 +92,7 @@ export default function AdminAnalyticsScreen() {
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>${item.revenue.toFixed(2)}</Text>
+          <Text style={styles.statValue}>${(item.revenue ?? 0).toFixed(2)}</Text>
           <Text style={styles.statLabel}>Revenue</Text>
         </View>
       </View>
@@ -197,7 +197,7 @@ export default function AdminAnalyticsScreen() {
               <View style={[styles.overviewIconContainer, { backgroundColor: `${Colors.secondary}20` }]}>
                 <DollarSign size={24} color={Colors.secondary} />
               </View>
-              <Text style={styles.overviewValue}>${data?.totalRevenue.toFixed(2) || '0.00'}</Text>
+              <Text style={styles.overviewValue}>${(data?.totalRevenue ?? 0).toFixed(2)}</Text>
               <Text style={styles.overviewLabel}>Total Revenue</Text>
             </View>
 
@@ -221,7 +221,7 @@ export default function AdminAnalyticsScreen() {
               <View style={[styles.overviewIconContainer, { backgroundColor: '#95E1D320' }]}>
                 <TrendingUp size={24} color="#95E1D3" />
               </View>
-              <Text style={styles.overviewValue}>{data?.avgRedemptionsPerBusiness || 0}</Text>
+              <Text style={styles.overviewValue}>{data?.avgRedemptionsPerBusiness ?? 0}</Text>
               <Text style={styles.overviewLabel}>Avg Per Biz</Text>
             </View>
           </View>
