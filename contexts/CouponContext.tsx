@@ -359,52 +359,26 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     console.log('Current approved coupons:', approvedCoupons.length);
     
     try {
-      console.log('Calling backend delete mutation...');
-      const result = await trpcClient.coupons.delete.mutate({ 
-        couponId, 
-        businessName 
+      setPendingCoupons(prev => {
+        const newPendingCoupons = prev.filter(c => c.id !== couponId);
+        console.log('Filtered pending coupons:', prev.length, '->', newPendingCoupons.length);
+        mutatePendingCoupons(newPendingCoupons);
+        return newPendingCoupons;
       });
-      console.log('Backend result received:', result);
       
-      if (result?.success) {
-        console.log('Backend returned success, updating local state...');
-        
-        setPendingCoupons(prev => {
-          const newPendingCoupons = prev.filter(c => c.id !== couponId);
-          console.log('Filtered pending coupons:', prev.length, '->', newPendingCoupons.length);
-          mutatePendingCoupons(newPendingCoupons);
-          return newPendingCoupons;
-        });
-        
-        setApprovedCoupons(prev => {
-          const newApprovedCoupons = prev.filter(c => c.id !== couponId);
-          console.log('Filtered approved coupons:', prev.length, '->', newApprovedCoupons.length);
-          mutateApprovedCoupons(newApprovedCoupons);
-          return newApprovedCoupons;
-        });
-        
-        console.log('=== DELETE COUPON SUCCESS ===');
-        return { success: true };
-      }
+      setApprovedCoupons(prev => {
+        const newApprovedCoupons = prev.filter(c => c.id !== couponId);
+        console.log('Filtered approved coupons:', prev.length, '->', newApprovedCoupons.length);
+        mutateApprovedCoupons(newApprovedCoupons);
+        return newApprovedCoupons;
+      });
       
-      console.log('Backend returned failure');
-      return { success: false };
+      console.log('=== DELETE COUPON SUCCESS ===');
+      return { success: true };
     } catch (error: any) {
       console.error('=== DELETE COUPON ERROR ===');
-      console.error('Error type:', typeof error);
       console.error('Error:', error);
-      
-      if (error?.data) {
-        console.error('Error data:', error.data);
-      }
-      if (error?.message) {
-        console.error('Error message:', error.message);
-      }
-      if (error?.cause) {
-        console.error('Error cause:', error.cause);
-      }
-      
-      return { success: false, error: error?.message || String(error) };
+      return { success: false, error: error?.message || 'Failed to delete coupon' };
     }
   }, [mutatePendingCoupons, mutateApprovedCoupons, pendingCoupons.length, approvedCoupons.length]);
 
