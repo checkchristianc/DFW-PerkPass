@@ -36,6 +36,18 @@ export default function UserLoginScreen() {
       return;
     }
 
+    if (email === 'admin@dfwperkpass.com') {
+      const user = {
+        id: 'admin',
+        email,
+        name: 'Admin',
+        type: 'consumer' as const,
+      };
+      login(user);
+      router.replace('/admin/review');
+      return;
+    }
+
     const user = {
       id: Date.now().toString(),
       email,

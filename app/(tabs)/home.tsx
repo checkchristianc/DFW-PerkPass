@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
-import { Search, Sparkles, LogOut, Briefcase, Shield } from 'lucide-react-native';
+import { Search, Sparkles, LogOut } from 'lucide-react-native';
 import {
   StyleSheet,
   Text,
@@ -43,32 +43,16 @@ export default function HomeScreen() {
                   <Sparkles size={16} color={Colors.accent} />
                 </View>
               </View>
-              <View style={styles.headerButtons}>
-                <TouchableOpacity 
-                  onPress={() => router.push('/admin/review')}
-                  style={styles.adminButton}
-                >
-                  <Shield size={18} color={Colors.accent} />
-                  <Text style={styles.adminButtonText}>Admin</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={() => router.push('/(business-tabs)/dashboard')}
-                  style={styles.testButton}
-                >
-                  <Briefcase size={18} color={Colors.accent} />
-                  <Text style={styles.testButtonText}>Business</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={() => {
-                    logout();
-                    router.replace('/auth/welcome');
-                  }}
-                  style={styles.logoutButton}
-                >
-                  <LogOut size={18} color={Colors.accent} />
-                  <Text style={styles.logoutButtonText}>Logout</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity 
+                onPress={() => {
+                  logout();
+                  router.replace('/auth/welcome');
+                }}
+                style={styles.logoutButton}
+              >
+                <LogOut size={18} color={Colors.accent} />
+                <Text style={styles.logoutButtonText}>Logout</Text>
+              </TouchableOpacity>
             </View>
             <Text style={styles.headerSubtitle}>
               Discover amazing deals from thousands of businesses
@@ -152,7 +136,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerTitle: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: '800' as const,
     color: Colors.accent,
   },
@@ -230,11 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.textSecondary,
   },
-  headerButtons: {
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -245,34 +224,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   logoutButtonText: {
-    fontSize: 14,
-    fontWeight: '600' as const,
-    color: Colors.accent,
-  },
-  testButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: `${Colors.secondary}40`,
-    borderRadius: 8,
-  },
-  testButtonText: {
-    fontSize: 14,
-    fontWeight: '600' as const,
-    color: Colors.accent,
-  },
-  adminButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: `${Colors.primary}30`,
-    borderRadius: 8,
-  },
-  adminButtonText: {
     fontSize: 14,
     fontWeight: '600' as const,
     color: Colors.accent,
