@@ -63,9 +63,19 @@ export const getBusinessAnalyticsProcedure = publicProcedure.query(async () => {
 
   const totalBusinesses = mockBusinesses.length;
   const activeSubscriptions = mockBusinesses.filter(b => b.subscriptionActive).length;
-  const totalRevenue = mockBusinesses.reduce((sum, b) => sum + b.revenue, 0);
-  const totalCoupons = mockBusinesses.reduce((sum, b) => sum + b.totalCoupons, 0);
-  const totalRedemptions = mockBusinesses.reduce((sum, b) => sum + b.totalRedemptions, 0);
+  const totalRevenue = mockBusinesses.reduce((sum, b) => sum + (b.revenue || 0), 0);
+  const totalCoupons = mockBusinesses.reduce((sum, b) => sum + (b.totalCoupons || 0), 0);
+  const totalRedemptions = mockBusinesses.reduce((sum, b) => sum + (b.totalRedemptions || 0), 0);
+  const avgRedemptionsPerBusiness = totalBusinesses > 0 ? Math.round(totalRedemptions / totalBusinesses) : 0;
+
+  console.log('Analytics computed:', {
+    totalBusinesses,
+    activeSubscriptions,
+    totalRevenue,
+    totalCoupons,
+    totalRedemptions,
+    avgRedemptionsPerBusiness,
+  });
 
   return {
     totalBusinesses,
@@ -73,7 +83,7 @@ export const getBusinessAnalyticsProcedure = publicProcedure.query(async () => {
     totalRevenue,
     totalCoupons,
     totalRedemptions,
-    avgRedemptionsPerBusiness: totalBusinesses > 0 ? Math.round(totalRedemptions / totalBusinesses) : 0,
+    avgRedemptionsPerBusiness,
     businesses: mockBusinesses,
   };
 });

@@ -35,6 +35,13 @@ export default function AdminAnalyticsScreen() {
   const insets = useSafeAreaInsets();
   const analyticsQuery = trpc.admin.businessAnalytics.useQuery();
 
+  console.log('Analytics query state:', {
+    isLoading: analyticsQuery.isLoading,
+    isError: analyticsQuery.isError,
+    error: analyticsQuery.error,
+    hasData: !!analyticsQuery.data,
+  });
+
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -125,6 +132,9 @@ export default function AdminAnalyticsScreen() {
   }
 
   if (analyticsQuery.error) {
+    const errorMessage = analyticsQuery.error?.message || 'Failed to load analytics';
+    console.error('Rendering error state:', errorMessage);
+    
     return (
       <>
         <Stack.Screen options={{ headerShown: false }} />
@@ -143,10 +153,13 @@ export default function AdminAnalyticsScreen() {
           <View style={styles.errorContainer}>
             <XCircle size={64} color="#ff4444" />
             <Text style={styles.errorTitle}>Error Loading Analytics</Text>
-            <Text style={styles.errorText}>{analyticsQuery.error.message}</Text>
+            <Text style={styles.errorText}>{errorMessage}</Text>
             <TouchableOpacity
               style={styles.retryButton}
-              onPress={() => analyticsQuery.refetch()}
+              onPress={() => {
+                console.log('Retrying analytics fetch...');
+                analyticsQuery.refetch();
+              }}
               activeOpacity={0.8}
             >
               <Text style={styles.retryButtonText}>Retry</Text>
@@ -221,7 +234,7 @@ export default function AdminAnalyticsScreen() {
               <View style={[styles.overviewIconContainer, { backgroundColor: '#95E1D320' }]}>
                 <TrendingUp size={24} color="#95E1D3" />
               </View>
-              <Text style={styles.overviewValue}>{data?.avgRedemptionsPerBusiness ?? 0}</Text>
+              <Text style={styles.overviewValue}>{Math.round(data?.avgRedemptionsPerBusiness ?? 0)}</Text>
               <Text style={styles.overviewLabel}>Avg Per Biz</Text>
             </View>
           </View>
