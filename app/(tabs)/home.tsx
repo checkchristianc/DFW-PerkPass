@@ -20,7 +20,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Coupon } from '@/types/coupon';
 
 export default function HomeScreen() {
-  const { featuredCoupons, searchQuery, setSearchQuery } = useCoupons();
+  const { coupons, featuredCoupons, searchQuery, setSearchQuery } = useCoupons();
   const { logout } = useAuth();
   const router = useRouter();
   const [localSearch, setLocalSearch] = useState<string>(searchQuery);
@@ -29,6 +29,8 @@ export default function HomeScreen() {
   const handleSearchSubmit = () => {
     setSearchQuery(localSearch);
   };
+
+  const displayCoupons = searchQuery.trim() ? coupons : featuredCoupons;
 
   return (
     <>
@@ -104,21 +106,25 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Featured Deals</Text>
+            <Text style={styles.sectionTitle}>
+              {searchQuery.trim() ? 'Search Results' : 'Featured Deals'}
+            </Text>
             <View style={styles.featuredBadge}>
-              <Text style={styles.featuredBadgeText}>{featuredCoupons.length} deals</Text>
+              <Text style={styles.featuredBadgeText}>{displayCoupons.length} deals</Text>
             </View>
           </View>
 
           <FlashList
-            data={featuredCoupons}
+            data={displayCoupons}
             renderItem={({ item }: { item: Coupon }) => <CouponCard coupon={item} />}
             keyExtractor={(item: Coupon) => item.id}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>No featured deals available</Text>
+                <Text style={styles.emptyText}>
+                  {searchQuery.trim() ? 'No coupons found' : 'No featured deals available'}
+                </Text>
               </View>
             }
           />
