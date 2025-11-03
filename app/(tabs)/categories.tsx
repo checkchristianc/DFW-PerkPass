@@ -143,9 +143,9 @@ const styles = StyleSheet.create({
   },
   categoryChip: {
     backgroundColor: Colors.card,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.border,
     marginRight: 8,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
   },
   categoryChipText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600' as const,
     color: Colors.textPrimary,
   },
