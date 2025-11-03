@@ -276,18 +276,21 @@ export default function MyCouponsScreen() {
                             style: 'destructive',
                             onPress: async () => {
                               try {
-                                console.log('Starting deletion for coupon:', item.id);
+                                console.log('=== UI: Starting deletion for coupon:', item.id);
                                 const result = await couponContext.deleteCoupon(item.id, user.businessName!);
-                                console.log('Deletion result:', result);
+                                console.log('=== UI: Deletion result:', result);
                                 
-                                if (result.success) {
+                                if (result?.success) {
                                   Alert.alert('Success', 'Coupon deleted successfully');
                                 } else {
-                                  Alert.alert('Error', 'Failed to delete coupon. Please try again.');
+                                  const errorMsg = result?.error || 'Failed to delete coupon. Please try again.';
+                                  console.error('=== UI: Deletion failed:', errorMsg);
+                                  Alert.alert('Error', errorMsg);
                                 }
-                              } catch (error) {
-                                console.error('Delete error:', error);
-                                Alert.alert('Error', 'An error occurred while deleting the coupon.');
+                              } catch (error: any) {
+                                console.error('=== UI: Delete exception:', error);
+                                const errorMsg = error?.message || 'An error occurred while deleting the coupon.';
+                                Alert.alert('Error', errorMsg);
                               }
                             },
                           },

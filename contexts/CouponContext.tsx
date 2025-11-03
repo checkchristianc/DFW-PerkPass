@@ -360,24 +360,25 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     
     try {
       console.log('Calling backend delete mutation...');
-      const result = await trpcClient.coupons.delete.mutate({ couponId, businessName });
-      console.log('Backend result:', JSON.stringify(result));
+      const result = await trpcClient.coupons.delete.mutate({ 
+        couponId, 
+        businessName 
+      });
+      console.log('Backend result received:', result);
       
-      if (result.success) {
+      if (result?.success) {
         console.log('Backend returned success, updating local state...');
         
         setPendingCoupons(prev => {
-          console.log('Filtering pending coupons, before:', prev.length);
           const newPendingCoupons = prev.filter(c => c.id !== couponId);
-          console.log('After filter:', newPendingCoupons.length);
+          console.log('Filtered pending coupons:', prev.length, '->', newPendingCoupons.length);
           mutatePendingCoupons(newPendingCoupons);
           return newPendingCoupons;
         });
         
         setApprovedCoupons(prev => {
-          console.log('Filtering approved coupons, before:', prev.length);
           const newApprovedCoupons = prev.filter(c => c.id !== couponId);
-          console.log('After filter:', newApprovedCoupons.length);
+          console.log('Filtered approved coupons:', prev.length, '->', newApprovedCoupons.length);
           mutateApprovedCoupons(newApprovedCoupons);
           return newApprovedCoupons;
         });
@@ -388,14 +389,22 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       
       console.log('Backend returned failure');
       return { success: false };
-    } catch (error) {
+    } catch (error: any) {
       console.error('=== DELETE COUPON ERROR ===');
-      console.error('Error details:', error);
-      if (error instanceof Error) {
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
+      console.error('Error type:', typeof error);
+      console.error('Error:', error);
+      
+      if (error?.data) {
+        console.error('Error data:', error.data);
       }
-      return { success: false, error: String(error) };
+      if (error?.message) {
+        console.error('Error message:', error.message);
+      }
+      if (error?.cause) {
+        console.error('Error cause:', error.cause);
+      }
+      
+      return { success: false, error: error?.message || String(error) };
     }
   }, [mutatePendingCoupons, mutateApprovedCoupons, pendingCoupons.length, approvedCoupons.length]);
 

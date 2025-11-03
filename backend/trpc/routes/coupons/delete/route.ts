@@ -9,12 +9,21 @@ export const deleteCouponProcedure = publicProcedure
     })
   )
   .mutation(async ({ input }) => {
-    console.log("Delete coupon request:", input);
+    console.log("=== DELETE COUPON BACKEND ===");
+    console.log("Coupon ID:", input.couponId);
+    console.log("Business Name:", input.businessName);
 
-    return {
-      success: true,
-      couponId: input.couponId,
-    };
+    try {
+      const result = {
+        success: true,
+        couponId: input.couponId,
+      };
+      console.log("Returning result:", JSON.stringify(result));
+      return result;
+    } catch (error) {
+      console.error("Error in delete procedure:", error);
+      throw new Error("Failed to delete coupon");
+    }
   });
 
 export default deleteCouponProcedure;
