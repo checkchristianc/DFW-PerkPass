@@ -349,6 +349,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
 
   return useMemo(() => ({
     coupons: filteredCoupons,
+    allCoupons,
     featuredCoupons,
     favoriteCoupons,
     favorites,
@@ -371,6 +372,7 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
     views,
   }), [
     filteredCoupons,
+    allCoupons,
     featuredCoupons,
     favoriteCoupons,
     favorites,

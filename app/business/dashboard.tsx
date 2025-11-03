@@ -22,7 +22,7 @@ import { Category } from '@/types/coupon';
 
 export default function BusinessDashboard() {
   const { user, logout } = useAuth();
-  const { submitCoupon, pendingCoupons, coupons } = useCoupons();
+  const { submitCoupon, pendingCoupons, allCoupons } = useCoupons();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -30,9 +30,9 @@ export default function BusinessDashboard() {
     const userBusinessName = user?.businessName;
     if (!userBusinessName) return [];
     
-    const allCoupons = [...pendingCoupons, ...coupons];
-    return allCoupons.filter(c => c.businessName === userBusinessName);
-  }, [pendingCoupons, coupons, user?.businessName]);
+    const allBusinessCoupons = [...pendingCoupons, ...allCoupons];
+    return allBusinessCoupons.filter(c => c.businessName === userBusinessName);
+  }, [pendingCoupons, allCoupons, user?.businessName]);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({

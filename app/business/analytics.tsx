@@ -19,15 +19,15 @@ const { width } = Dimensions.get('window');
 
 export default function BusinessAnalyticsScreen() {
   const { user } = useAuth();
-  const { redemptions, views, pendingCoupons } = useCoupons();
+  const { redemptions, views, allCoupons } = useCoupons();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
   const businessCoupons = useMemo(() => {
-    return pendingCoupons.filter(
+    return allCoupons.filter(
       (c) => c.businessName === user?.businessName && c.status === 'approved'
     );
-  }, [pendingCoupons, user?.businessName]);
+  }, [allCoupons, user?.businessName]);
 
   const analytics = useMemo(() => {
     let totalViews = 0;
