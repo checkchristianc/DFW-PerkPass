@@ -133,7 +133,6 @@ export default function AdminAnalyticsScreen() {
 
   if (analyticsQuery.error) {
     const errorMessage = analyticsQuery.error?.message || 'Failed to load analytics';
-    console.error('Rendering error state:', errorMessage);
     
     return (
       <>
