@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Briefcase, Mail, Lock, Building2, DollarSign, CheckCircle } from 'lucide-react-native';
+import { Briefcase, Mail, Lock, Building2, DollarSign, CheckCircle, CheckSquare, Square } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   View,
@@ -24,10 +24,16 @@ export default function BusinessLoginScreen() {
   const [ownerName, setOwnerName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const handleSubmit = () => {
     if (!email || !password || (isSignUp && (!businessName || !ownerName))) {
       Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (isSignUp && !agreedToTerms) {
+      Alert.alert('Error', 'Please agree to the Terms of Service and Privacy Policy to continue');
       return;
     }
 
@@ -174,6 +180,26 @@ export default function BusinessLoginScreen() {
                 testID="password-input"
               />
             </View>
+
+            {isSignUp && (
+              <TouchableOpacity
+                style={styles.termsContainer}
+                onPress={() => setAgreedToTerms(!agreedToTerms)}
+                activeOpacity={0.7}
+              >
+                {agreedToTerms ? (
+                  <CheckSquare size={24} color={Colors.secondary} />
+                ) : (
+                  <Square size={24} color={Colors.textSecondary} />
+                )}
+                <Text style={styles.termsText}>
+                  I agree to the{' '}
+                  <Text style={styles.termsLink}>Terms of Service</Text>
+                  {' '}and{' '}
+                  <Text style={styles.termsLink}>Privacy Policy</Text>
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               style={styles.submitButton}
@@ -374,5 +400,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: Colors.primary,
     fontWeight: '600' as const,
+  },
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+  },
+  termsText: {
+    flex: 1,
+    fontSize: 14,
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  termsLink: {
+    color: Colors.secondary,
+    fontWeight: '600' as const,
+    textDecorationLine: 'underline' as const,
   },
 });

@@ -102,9 +102,10 @@ export default function ProfileScreen() {
               <View style={styles.avatar}>
                 <User size={48} color={Colors.accent} strokeWidth={2} />
               </View>
+              <Text style={styles.userName}>{user.name}</Text>
               <View style={styles.userTypeBadge}>
                 <Text style={styles.userTypeBadgeText}>
-                  {user.type === 'business' ? 'Business' : 'Consumer'}
+                  {user.type === 'business' ? 'Business Account' : 'Member'}
                 </Text>
               </View>
             </View>
@@ -359,6 +360,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 12,
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: '700' as const,
+    color: Colors.textPrimary,
+    marginBottom: 8,
   },
   userTypeBadgeText: {
     fontSize: 13,

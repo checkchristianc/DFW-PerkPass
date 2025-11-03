@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle, RefreshCw } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
 import {
   StyleSheet,
@@ -19,6 +19,7 @@ import Colors from '@/constants/colors';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCoupons } from '@/contexts/CouponContext';
 import { Category } from '@/types/coupon';
+import { generateCouponCode } from '@/utils/couponCodeGenerator';
 
 export default function BusinessDashboard() {
   const { user, logout } = useAuth();
@@ -404,13 +405,25 @@ export default function BusinessDashboard() {
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Coupon Code (Optional)</Text>
+                <View style={styles.labelRow}>
+                  <Text style={styles.label}>Coupon Code (Optional)</Text>
+                  <TouchableOpacity
+                    style={styles.generateCodeButton}
+                    onPress={() => {
+                      const newCode = generateCouponCode();
+                      setFormData({ ...formData, code: newCode });
+                    }}
+                  >
+                    <RefreshCw size={14} color={Colors.primary} />
+                    <Text style={styles.generateCodeText}>Generate</Text>
+                  </TouchableOpacity>
+                </View>
                 <TextInput
                   style={styles.input}
-                  placeholder="e.g., SAVE20"
+                  placeholder="e.g., SAVE20 or tap Generate"
                   placeholderTextColor={Colors.textSecondary}
                   value={formData.code}
-                  onChangeText={(text) => setFormData({ ...formData, code: text })}
+                  onChangeText={(text) => setFormData({ ...formData, code: text.toUpperCase() })}
                   autoCapitalize="characters"
                 />
               </View>
@@ -783,6 +796,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     lineHeight: 18,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  generateCodeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: `${Colors.primary}15`,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+  },
+  generateCodeText: {
+    fontSize: 13,
+    fontWeight: '600' as const,
+    color: Colors.primary,
   },
   myCouponsSection: {
     margin: 16,
