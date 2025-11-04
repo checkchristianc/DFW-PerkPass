@@ -294,10 +294,14 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
   }, [mutatePendingCoupons, pendingCoupons]);
 
   const redeemCoupon = useCallback(async (couponId: string, userId?: string) => {
-    console.log('Redeeming coupon:', couponId);
+    console.log('=== REDEEM COUPON STARTING ===');
+    console.log('Coupon ID:', couponId);
+    console.log('User ID:', userId);
     
     try {
+      console.log('Calling tRPC redeem mutation...');
       const result = await trpcClient.coupons.redeem.mutate({ couponId, userId });
+      console.log('tRPC redeem result:', result);
       
       if (result.success) {
         const newRedemption: CouponRedemption = {
@@ -307,19 +311,28 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
           redeemedAt: result.redemption.redeemedAt,
         };
         
+        console.log('Creating new redemption:', newRedemption);
+        
         setRedemptions(prev => {
           const newRedemptions = [...prev, newRedemption];
           mutateRedemptions(newRedemptions);
+          console.log('Updated redemptions count:', newRedemptions.length);
           return newRedemptions;
         });
         
+        console.log('=== REDEEM COUPON SUCCESS ===');
         return { success: true };
       }
       
+      console.log('=== REDEEM COUPON FAILED - result.success is false ===');
       return { success: false };
-    } catch (error) {
-      console.log('Error redeeming coupon:', error);
-      return { success: false };
+    } catch (error: any) {
+      console.error('=== REDEEM COUPON ERROR ===');
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error?.message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      console.error('Full error:', error);
+      return { success: false, error: error?.message || 'Unknown error' };
     }
   }, [mutateRedemptions]);
 

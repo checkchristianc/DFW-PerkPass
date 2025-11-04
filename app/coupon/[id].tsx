@@ -65,6 +65,10 @@ export default function CouponDetailScreen() {
   };
 
   const handleRedeem = async () => {
+    console.log('=== HANDLE REDEEM STARTING ===');
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('user:', user);
+    
     if (!isAuthenticated || !user) {
       Alert.alert('Login Required', 'Please login to redeem this coupon.');
       return;
@@ -75,11 +79,14 @@ export default function CouponDetailScreen() {
       return;
     }
 
+    console.log('Starting redemption process...');
     setIsRedeeming(true);
     const result = await redeemCoupon(coupon.id, user.id);
     setIsRedeeming(false);
+    console.log('Redemption result:', result);
 
     if (result.success) {
+      console.log('Redemption successful!');
       setHasRedeemed(true);
       Alert.alert(
         'Coupon Redeemed!',
@@ -87,7 +94,9 @@ export default function CouponDetailScreen() {
         [{ text: 'OK' }]
       );
     } else {
-      Alert.alert('Error', 'Failed to redeem coupon. Please try again.');
+      console.error('Redemption failed:', result);
+      const errorMessage = (result as any)?.error || 'Failed to redeem coupon. Please try again.';
+      Alert.alert('Error', errorMessage);
     }
   };
 
