@@ -21,6 +21,7 @@ app.use(
   trpcServer({
     router: appRouter,
     createContext,
+    endpoint: "/api/trpc",
     onError({ error, type, path }) {
       console.error("tRPC Error:", { type, path, error: error.message });
     },
@@ -33,7 +34,6 @@ app.get("/", (c) => {
 
 app.post("/stripe-webhook", async (c) => {
   const body = await c.req.text();
-  const signature = c.req.header("stripe-signature");
   
   console.log("Webhook received");
   
