@@ -17,6 +17,7 @@ export interface AuthUser {
   stripeCustomerId?: string;
   stripePaymentMethodId?: string;
   stripeConnectedAccountId?: string;
+  profilePicture?: string;
 }
 
 interface AuthData {
@@ -80,12 +81,22 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     }
   }, [authData.user, mutateAuth]);
 
+  const updateProfilePicture = useCallback((profilePicture: string) => {
+    if (authData.user) {
+      const updatedUser = { ...authData.user, profilePicture };
+      const data: AuthData = { user: updatedUser, isAuthenticated: true };
+      setAuthData(data);
+      mutateAuth(data);
+    }
+  }, [authData.user, mutateAuth]);
+
   return useMemo(() => ({
     user: authData.user,
     isAuthenticated: authData.isAuthenticated,
     login,
     logout,
     updateSubscription,
+    updateProfilePicture,
     isLoading: authQuery.isLoading,
   }), [
     authData.user,
@@ -93,6 +104,7 @@ export const [AuthProvider, useAuth] = createContextHook(() => {
     login,
     logout,
     updateSubscription,
+    updateProfilePicture,
     authQuery.isLoading,
   ]);
 });

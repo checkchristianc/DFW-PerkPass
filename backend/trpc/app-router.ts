@@ -5,6 +5,7 @@ import getCouponAnalyticsProcedure from "./routes/coupons/analytics/route";
 import trackCouponViewProcedure from "./routes/coupons/track-view/route";
 import deleteCouponProcedure from "./routes/coupons/delete/route";
 import getBusinessAnalyticsProcedure from "./routes/admin/business-analytics/route";
+import { updateProfilePictureProcedure } from "./routes/profile/update-picture/route";
 
 export const appRouter = createTRPCRouter({
   example: createTRPCRouter({
@@ -18,6 +19,9 @@ export const appRouter = createTRPCRouter({
   }),
   admin: createTRPCRouter({
     businessAnalytics: getBusinessAnalyticsProcedure,
+  }),
+  profile: createTRPCRouter({
+    updatePicture: updateProfilePictureProcedure,
   }),
 });
 

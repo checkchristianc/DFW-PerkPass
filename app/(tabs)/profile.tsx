@@ -8,8 +8,10 @@ import {
   TextInput,
   Alert,
   Platform,
+  Image,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { 
   User, 
   Mail, 
@@ -20,7 +22,8 @@ import {
   CreditCard, 
   History,
   Settings,
-  LogOut
+  LogOut,
+  Camera
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -28,12 +31,40 @@ import Colors from '@/constants/colors';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfileScreen() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfilePicture } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(user?.name || '');
   const [editedEmail, setEditedEmail] = useState(user?.email || '');
+
+  const handlePickImage = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (!permissionResult.granted) {
+        Alert.alert('Permission Required', 'Please allow access to your photos to upload a profile picture.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'images' as const,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets[0].base64) {
+        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        updateProfilePicture(base64Image);
+        Alert.alert('Success', 'Profile picture updated!');
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert('Error', 'Failed to upload image. Please try again.');
+    }
+  };
 
   const handleSave = () => {
     if (!editedName.trim() || !editedEmail.trim()) {
@@ -99,9 +130,18 @@ export default function ProfileScreen() {
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           <View style={styles.profileCard}>
             <View style={styles.avatarSection}>
-              <View style={styles.avatar}>
-                <User size={48} color={Colors.accent} strokeWidth={2} />
-              </View>
+              <TouchableOpacity style={styles.avatarContainer} onPress={handlePickImage}>
+                {user.profilePicture ? (
+                  <Image source={{ uri: user.profilePicture }} style={styles.avatarImage} />
+                ) : (
+                  <View style={styles.avatar}>
+                    <User size={48} color={Colors.accent} strokeWidth={2} />
+                  </View>
+                )}
+                <View style={styles.cameraButton}>
+                  <Camera size={16} color={Colors.accent} />
+                </View>
+              </TouchableOpacity>
               <Text style={styles.userName}>{user.name}</Text>
               <View style={styles.userTypeBadge}>
                 <Text style={styles.userTypeBadgeText}>
@@ -346,6 +386,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
+  avatarContainer: {
+    position: 'relative' as const,
+    marginBottom: 12,
+  },
   avatar: {
     width: 100,
     height: 100,
@@ -353,7 +397,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+  },
+  avatarImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  cameraButton: {
+    position: 'absolute' as const,
+    right: 0,
+    bottom: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: Colors.card,
   },
   userTypeBadge: {
     backgroundColor: Colors.secondary,
