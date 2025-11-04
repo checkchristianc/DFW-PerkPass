@@ -16,10 +16,12 @@ import * as Clipboard from 'expo-clipboard';
 import Colors from '@/constants/colors';
 import { useCoupons } from '@/contexts/CouponContext';
 import { MOCK_COUPONS } from '@/mocks/coupons';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function CouponDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { toggleFavorite, isFavorite, redeemCoupon, trackView, getCouponStats } = useCoupons();
+  const { user, isAuthenticated } = useAuth();
   const [copied, setCopied] = useState<boolean>(false);
   const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
   const [hasRedeemed, setHasRedeemed] = useState<boolean>(false);
@@ -63,13 +65,18 @@ export default function CouponDetailScreen() {
   };
 
   const handleRedeem = async () => {
+    if (!isAuthenticated || !user) {
+      Alert.alert('Login Required', 'Please login to redeem this coupon.');
+      return;
+    }
+
     if (hasRedeemed) {
       Alert.alert('Already Redeemed', 'You have already redeemed this coupon!');
       return;
     }
 
     setIsRedeeming(true);
-    const result = await redeemCoupon(coupon.id);
+    const result = await redeemCoupon(coupon.id, user.id);
     setIsRedeeming(false);
 
     if (result.success) {
