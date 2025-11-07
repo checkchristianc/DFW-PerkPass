@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -33,7 +34,7 @@ export default function BusinessLoginScreen() {
     }
 
     if (isSignUp && !agreedToTerms) {
-      Alert.alert('Error', 'Please agree to the Terms of Service and Privacy Policy to continue');
+      Alert.alert('Error', 'Please agree to the Privacy Policy to continue');
       return;
     }
 
@@ -194,9 +195,12 @@ export default function BusinessLoginScreen() {
                 )}
                 <Text style={styles.termsText}>
                   I agree to the{' '}
-                  <Text style={styles.termsLink}>Terms of Service</Text>
-                  {' '}and{' '}
-                  <Text style={styles.termsLink}>Privacy Policy</Text>
+                  <Text
+                    style={styles.termsLink}
+                    onPress={() => Linking.openURL('https://rork.app/2v8m2thbas1pjfqo1rail/privacy.html')}
+                  >
+                    Privacy Policy
+                  </Text>
                 </Text>
               </TouchableOpacity>
             )}

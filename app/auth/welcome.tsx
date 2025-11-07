@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -93,9 +94,12 @@ export default function WelcomeScreen() {
         </TouchableOpacity>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            By continuing, you agree to our Terms of Service and Privacy Policy
-          </Text>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://rork.app/2v8m2thbas1pjfqo1rail/privacy.html')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.privacyLink}>Privacy Policy</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -230,10 +234,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: Colors.border,
   },
-  footerText: {
-    fontSize: 13,
-    color: Colors.textSecondary,
+  privacyLink: {
+    fontSize: 14,
+    color: Colors.primary,
     textAlign: 'center',
-    lineHeight: 18,
+    fontWeight: '600' as const,
+    textDecorationLine: 'underline' as const,
   },
 });
