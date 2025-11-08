@@ -10,7 +10,7 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { 
   Store, 
@@ -23,7 +23,9 @@ import {
   Clock,
   Globe,
   User,
-  Camera
+  Camera,
+  LogOut,
+  ChevronRight
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -50,7 +52,8 @@ interface BusinessProfile {
 }
 
 export default function BusinessProfileScreen() {
-  const { user, updateProfilePicture } = useAuth();
+  const { user, logout, updateProfilePicture } = useAuth();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -118,6 +121,27 @@ export default function BusinessProfileScreen() {
   const handleCancel = () => {
     setEditedProfile(profile);
     setIsEditing(false);
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: () => {
+            logout();
+            router.replace('/auth/welcome');
+          },
+        },
+      ]
+    );
   };
 
   if (!user || user.type !== 'business') {
@@ -432,6 +456,21 @@ export default function BusinessProfileScreen() {
               </View>
             )}
           </View>
+
+          <View style={styles.section}>
+            <TouchableOpacity
+              style={styles.logoutMenuItem}
+              onPress={handleLogout}
+            >
+              <View style={styles.menuItemLeft}>
+                <View style={[styles.menuIcon, styles.logoutIcon]}>
+                  <LogOut size={20} color={Colors.danger} />
+                </View>
+                <Text style={[styles.menuItemTitle, styles.logoutText]}>Logout</Text>
+              </View>
+              <ChevronRight size={20} color={Colors.danger} />
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     </>
@@ -728,5 +767,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.textSecondary,
     textAlign: 'center' as const,
+  },
+  section: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  logoutMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  menuItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: `${Colors.primary}15`,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutIcon: {
+    backgroundColor: `${Colors.danger}15`,
+  },
+  menuItemTitle: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    color: Colors.textPrimary,
+  },
+  logoutText: {
+    color: Colors.danger,
   },
 });
