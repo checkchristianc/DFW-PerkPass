@@ -19,7 +19,6 @@ import {
   Save, 
   X, 
   ChevronRight, 
-  CreditCard, 
   History,
   Settings,
   LogOut,
@@ -268,22 +267,6 @@ export default function ProfileScreen() {
                   <View>
                     <Text style={styles.menuItemTitle}>Redemption History</Text>
                     <Text style={styles.menuItemSubtitle}>View all your redeemed coupons</Text>
-                  </View>
-                </View>
-                <ChevronRight size={20} color={Colors.textSecondary} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.menuItem}
-                onPress={() => Alert.alert('Coming Soon', 'Payment methods management coming soon!')}
-              >
-                <View style={styles.menuItemLeft}>
-                  <View style={styles.menuIcon}>
-                    <CreditCard size={20} color={Colors.primary} />
-                  </View>
-                  <View>
-                    <Text style={styles.menuItemTitle}>Payment Methods</Text>
-                    <Text style={styles.menuItemSubtitle}>Manage your payment options</Text>
                   </View>
                 </View>
                 <ChevronRight size={20} color={Colors.textSecondary} />
