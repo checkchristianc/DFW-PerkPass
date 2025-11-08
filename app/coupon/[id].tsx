@@ -81,21 +81,29 @@ export default function CouponDetailScreen() {
 
     console.log('Starting redemption process...');
     setIsRedeeming(true);
-    const result = await redeemCoupon(coupon.id, user.id);
-    setIsRedeeming(false);
-    console.log('Redemption result:', result);
+    
+    try {
+      const result = await redeemCoupon(coupon.id, user.id);
+      setIsRedeeming(false);
+      console.log('Redemption result:', result);
 
-    if (result.success) {
-      console.log('Redemption successful!');
-      setHasRedeemed(true);
-      Alert.alert(
-        'Coupon Redeemed!',
-        'Your coupon has been successfully redeemed. Show this to the cashier.',
-        [{ text: 'OK' }]
-      );
-    } else {
-      console.error('Redemption failed:', result);
-      const errorMessage = (result as any)?.error || 'Failed to redeem coupon. Please try again.';
+      if (result.success) {
+        console.log('Redemption successful!');
+        setHasRedeemed(true);
+        Alert.alert(
+          'Coupon Redeemed!',
+          'Your coupon has been successfully redeemed. Show this to the cashier.',
+          [{ text: 'OK' }]
+        );
+      } else {
+        console.error('Redemption failed:', result);
+        const errorMessage = (result as any)?.error || 'Failed to redeem coupon. Please try again.';
+        Alert.alert('Redemption Failed', errorMessage);
+      }
+    } catch (error: any) {
+      setIsRedeeming(false);
+      console.error('Unexpected error during redemption:', error);
+      const errorMessage = error?.message || 'An unexpected error occurred. Please try again.';
       Alert.alert('Error', errorMessage);
     }
   };

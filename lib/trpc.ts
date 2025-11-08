@@ -28,6 +28,11 @@ export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpLink({
       url: `${getBaseUrl()}/api/trpc`,
+      headers: () => {
+        return {
+          'Content-Type': 'application/json',
+        };
+      },
     }),
   ],
 });
