@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, Settings, AlertCircle, Clock, CheckCircle, RefreshCw, ChevronRight } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, Settings, AlertCircle, Clock, CheckCircle, RefreshCw } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
 import {
   StyleSheet,
@@ -192,7 +192,31 @@ export default function BusinessDashboard() {
                 <Text style={styles.businessName}>{user?.businessName || 'My Business'}</Text>
               </View>
             </View>
-
+            <TouchableOpacity
+              style={styles.headerLogoutButton}
+              onPress={() => {
+                Alert.alert(
+                  'Logout',
+                  'Are you sure you want to logout?',
+                  [
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                    {
+                      text: 'Logout',
+                      style: 'destructive',
+                      onPress: () => {
+                        logout();
+                        router.replace('/auth/welcome');
+                      },
+                    },
+                  ]
+                );
+              }}
+            >
+              <LogOut size={20} color={Colors.accent} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -514,39 +538,7 @@ export default function BusinessDashboard() {
             </View>
           </View>
 
-          <View style={styles.logoutSection}>
-            <TouchableOpacity
-              style={styles.logoutMenuItem}
-              onPress={() => {
-                Alert.alert(
-                  'Logout',
-                  'Are you sure you want to logout?',
-                  [
-                    {
-                      text: 'Cancel',
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'Logout',
-                      style: 'destructive',
-                      onPress: () => {
-                        logout();
-                        router.replace('/auth/welcome');
-                      },
-                    },
-                  ]
-                );
-              }}
-            >
-              <View style={styles.menuItemLeft}>
-                <View style={[styles.menuIcon, styles.logoutIcon]}>
-                  <LogOut size={20} color={Colors.danger} />
-                </View>
-                <Text style={[styles.menuItemTitle, styles.logoutText]}>Logout</Text>
-              </View>
-              <ChevronRight size={20} color={Colors.danger} />
-            </TouchableOpacity>
-          </View>
+
         </ScrollView>
       </View>
     </>
@@ -604,46 +596,13 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     marginTop: 2,
   },
-  logoutSection: {
-    backgroundColor: Colors.card,
-    borderRadius: 16,
-    padding: 16,
-    margin: 16,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  logoutMenuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-  },
-  menuItemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    flex: 1,
-  },
-  menuIcon: {
+  headerLogoutButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: `${Colors.primary}15`,
+    backgroundColor: `${Colors.danger}20`,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logoutIcon: {
-    backgroundColor: `${Colors.danger}15`,
-  },
-  menuItemTitle: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: Colors.textPrimary,
-    marginBottom: 2,
-  },
-  logoutText: {
-    color: Colors.danger,
   },
   createSection: {
     backgroundColor: Colors.card,
