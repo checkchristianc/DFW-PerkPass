@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Colors from '@/constants/colors';
+import { PRIVACY_POLICY_URL } from '@/constants/config';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function BusinessLoginScreen() {
@@ -197,7 +198,7 @@ export default function BusinessLoginScreen() {
                   I agree to the{' '}
                   <Text
                     style={styles.termsLink}
-                    onPress={() => Linking.openURL('https://rork.app/2v8m2thbas1pjfqo1rail/privacy.html')}
+                    onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
                   >
                     Privacy Policy
                   </Text>

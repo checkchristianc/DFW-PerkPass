@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import Colors from '@/constants/colors';
+import { PRIVACY_POLICY_URL } from '@/constants/config';
 
 export default function WelcomeScreen() {
   return (
@@ -95,7 +96,7 @@ export default function WelcomeScreen() {
 
         <View style={styles.footer}>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://rork.app/2v8m2thbas1pjfqo1rail/privacy.html')}
+            onPress={() => Linking.openURL(PRIVACY_POLICY_URL)}
             activeOpacity={0.7}
           >
             <Text style={styles.privacyLink}>Privacy Policy</Text>
