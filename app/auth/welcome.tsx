@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { User, Briefcase, Tag, ArrowRight } from 'lucide-react-native';
+import { User, Briefcase, Tag } from 'lucide-react-native';
 import React from 'react';
 import {
   View,
@@ -83,16 +83,6 @@ export default function WelcomeScreen() {
             </View>
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={styles.testButton}
-          onPress={() => router.push('/(tabs)/home')}
-          activeOpacity={0.7}
-          testID="skip-to-app"
-        >
-          <Text style={styles.testButtonText}>Skip to App (Testing)</Text>
-          <ArrowRight size={20} color={Colors.primary} strokeWidth={2} />
-        </TouchableOpacity>
 
         <View style={styles.footer}>
           <TouchableOpacity
@@ -210,24 +200,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.textSecondary,
     fontWeight: '300' as const,
-  },
-  testButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    backgroundColor: Colors.accent,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: Colors.primary,
-    marginTop: 32,
-  },
-  testButtonText: {
-    fontSize: 16,
-    fontWeight: '600' as const,
-    color: Colors.primary,
   },
   footer: {
     marginTop: 40,

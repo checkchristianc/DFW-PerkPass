@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { publicProcedure } from "../../../create-context";
+import { TRPCError } from "@trpc/server";
 
 export const redeemCouponProcedure = publicProcedure
   .input(
@@ -9,19 +10,42 @@ export const redeemCouponProcedure = publicProcedure
     })
   )
   .mutation(async ({ input }) => {
-    console.log('Redeeming coupon:', input);
-    
-    const redemption = {
-      id: `redemption-${Date.now()}`,
-      couponId: input.couponId,
-      userId: input.userId,
-      redeemedAt: new Date().toISOString(),
-    };
-    
-    return {
-      success: true,
-      redemption,
-    };
+    try {
+      console.log('Redeeming coupon:', input);
+      
+      if (!input.couponId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Coupon ID is required',
+        });
+      }
+      
+      const redemption = {
+        id: `redemption-${Date.now()}`,
+        couponId: input.couponId,
+        userId: input.userId || 'anonymous',
+        redeemedAt: new Date().toISOString(),
+      };
+      
+      console.log('Redemption successful:', redemption);
+      
+      return {
+        success: true,
+        redemption,
+      };
+    } catch (error) {
+      console.error('Error in redeemCouponProcedure:', error);
+      
+      if (error instanceof TRPCError) {
+        throw error;
+      }
+      
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to redeem coupon',
+        cause: error,
+      });
+    }
   });
 
 export default redeemCouponProcedure;
