@@ -215,7 +215,8 @@ export default function BusinessDashboard() {
                 );
               }}
             >
-              <LogOut size={20} color={Colors.accent} />
+              <LogOut size={18} color={Colors.danger} />
+              <Text style={styles.headerLogoutButtonText}>Logout</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -597,12 +598,18 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   headerLogoutButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: `${Colors.danger}20`,
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+    backgroundColor: `${Colors.danger}15`,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+  },
+  headerLogoutButtonText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: Colors.danger,
   },
   createSection: {
     backgroundColor: Colors.card,
