@@ -65,40 +65,57 @@ export default function CouponDetailScreen() {
   };
 
   const handleRedeem = async () => {
-    console.log('=== HANDLE REDEEM STARTING ===');
-    console.log('isAuthenticated:', isAuthenticated);
-    console.log('user:', user);
-    
+    console.log("=== HANDLE REDEEM STARTING ===");
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("user:", user);
+    console.log("coupon.id:", coupon?.id);
+    console.log("hasRedeemed:", hasRedeemed);
+  
     if (!isAuthenticated || !user) {
-      Alert.alert('Login Required', 'Please login to redeem this coupon.');
+      console.log("User not authenticated.");
+      Alert.alert("Login Required", "Please login to redeem this coupon.");
       return;
     }
-
+  
     if (hasRedeemed) {
-      Alert.alert('Already Redeemed', 'You have already redeemed this coupon!');
+      console.log("Coupon already redeemed.");
+      Alert.alert("Already Redeemed", "You have already redeemed this coupon!");
       return;
     }
-
-    console.log('Starting redemption process...');
+  
     setIsRedeeming(true);
-    const result = await redeemCoupon(coupon.id, user.id);
-    setIsRedeeming(false);
-    console.log('Redemption result:', result);
-
-    if (result.success) {
-      console.log('Redemption successful!');
-      setHasRedeemed(true);
+  
+    try {
+      console.log("Calling redeemCoupon...");
+      const result = await redeemCoupon(coupon.id, user.id);
+      console.log("Raw result from redeemCoupon:", result);
+  
+      setIsRedeeming(false);
+  
+      if (result?.success) {
+        console.log("Redemption successful!");
+        setHasRedeemed(true);
+        Alert.alert(
+          "Coupon Redeemed!",
+          "Your coupon has been successfully redeemed. Show this to the cashier.",
+          [{ text: "OK" }]
+        );
+      } else {
+        console.log("Redemption failed:", result);
+        const errorMessage = (result as any)?.error || "Failed to redeem coupon.";
+        Alert.alert("Redemption Failed", errorMessage);
+      }
+    } catch (err) {
+      setIsRedeeming(false);
+      console.error("Unexpected error during redemption:", err);
       Alert.alert(
-        'Coupon Redeemed!',
-        'Your coupon has been successfully redeemed. Show this to the cashier.',
-        [{ text: 'OK' }]
+        "Error",
+        err instanceof Error ? err.message : "Something went wrong during redemption."
       );
-    } else {
-      console.error('Redemption failed:', result);
-      const errorMessage = (result as any)?.error || 'Failed to redeem coupon. Please try again.';
-      Alert.alert('Error', errorMessage);
     }
   };
+  
+  
 
   const stats = getCouponStats(coupon.id);
 
