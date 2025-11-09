@@ -331,18 +331,21 @@ export const [CouponProvider, useCoupons] = createContextHook(() => {
       return { success: false, error: 'Invalid response from server' };
     } catch (error: any) {
       console.error('=== REDEEM COUPON ERROR ===');
-      console.error('Error type:', typeof error);
-      console.error('Error name:', error?.name);
-      console.error('Error message:', error?.message);
-      console.error('Error shape:', error?.shape);
-      console.error('Error data:', error?.data);
+      console.error('Full error object:', error);
       
-      const errorMessage = error?.message || 
-                          error?.data?.message || 
-                          error?.shape?.message || 
-                          'Failed to redeem coupon';
+      let errorMessage = 'Failed to redeem coupon';
       
-      console.error('Extracted error message:', errorMessage);
+      if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.data?.message) {
+        errorMessage = error.data.message;
+      }
+      
+      console.error('Final error message:', errorMessage);
       return { success: false, error: errorMessage };
     }
   }, [mutateRedemptions]);

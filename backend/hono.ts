@@ -23,7 +23,14 @@ app.use(
     createContext,
     endpoint: "/api/trpc",
     onError({ error, type, path }) {
-      console.error("tRPC Error:", { type, path, error: error.message });
+      console.error("tRPC Error:", { type, path, error: error.message, code: error.code });
+    },
+    responseMeta() {
+      return {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
     },
   })
 );
