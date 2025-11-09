@@ -100,7 +100,8 @@ app.post("/stripe-webhook", async (c) => {
   }
 });
 
-app.get("/check-subscription", (c) => {
+// Fixed: Changed from "/check-subscription" to "/api/check-subscription"
+app.get("/api/check-subscription", (c) => {
   const email = c.req.query("email");
   
   if (!email) {
@@ -118,6 +119,38 @@ app.get("/check-subscription", (c) => {
     status: subscription.status,
     subscriptionId: subscription.subscriptionId,
   });
+});
+
+// New: REST endpoint for redeeming coupons
+app.post("/api/redeem-coupon", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { couponId, userId } = body;
+    
+    if (!couponId) {
+      return c.json({ error: "Coupon ID is required" }, 400);
+    }
+    
+    const redemption = {
+      id: `redemption-${Date.now()}`,
+      couponId,
+      userId: userId || 'anonymous',
+      redeemedAt: new Date().toISOString(),
+    };
+    
+    console.log('Redeeming coupon via REST API:', redemption);
+    
+    return c.json({
+      success: true,
+      redemption,
+    });
+  } catch (error) {
+    console.error("Error redeeming coupon:", error);
+    return c.json({ 
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to redeem coupon" 
+    }, 500);
+  }
 });
 
 app.get("/stripe-success", (c) => {
@@ -196,3 +229,8 @@ app.get("/stripe-success", (c) => {
 });
 
 export default app;
+
+// Export handler for Expo Router API routes (Vercel serverless)
+export const handler = async (request: Request) => {
+  return app.fetch(request);
+};
