@@ -24,5 +24,3 @@ export const appRouter = createTRPCRouter({
     updatePicture: updateProfilePictureProcedure,
   }),
 });
-
-export type AppRouter = typeof appRouter;
