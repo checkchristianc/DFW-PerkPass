@@ -39,3 +39,4 @@ export function generateCustomCode(prefix: string, length: number = 6): string {
   
   return code;
 }
+

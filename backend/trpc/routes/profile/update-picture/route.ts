@@ -18,3 +18,4 @@ export const updateProfilePictureProcedure = publicProcedure
       profilePicture: input.profilePicture,
     };
   });
+

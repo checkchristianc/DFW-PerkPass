@@ -48,3 +48,4 @@ export interface CouponAnalytics {
   lastRedeemedAt?: string;
   redemptionsByDate: { date: string; count: number }[];
 }
+

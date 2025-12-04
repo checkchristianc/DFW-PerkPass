@@ -10,3 +10,4 @@ export const STRIPE_CONFIG = {
 export const STRIPE_CONNECT_CONFIG = {
   clientId: process.env.EXPO_PUBLIC_STRIPE_CONNECT_CLIENT_ID || '',
 };
+

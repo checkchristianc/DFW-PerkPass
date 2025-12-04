@@ -55,3 +55,4 @@ export function calculateBusinessPayout(amount: number): number {
   const platformFee = calculatePlatformFee(amount);
   return amount - platformFee;
 }
+

@@ -51,3 +51,4 @@ export default function BusinessTabLayout() {
     </Tabs>
   );
 }
+

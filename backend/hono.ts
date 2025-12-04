@@ -234,3 +234,4 @@ export default app;
 export const handler = async (request: Request) => {
   return app.fetch(request);
 };
+

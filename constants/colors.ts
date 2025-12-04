@@ -24,3 +24,4 @@ export default {
   tabIconDefault: "#9CA3AF",
   tabIconSelected: primary,
 };
+

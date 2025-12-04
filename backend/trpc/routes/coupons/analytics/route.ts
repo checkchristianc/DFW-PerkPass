@@ -20,3 +20,4 @@ export const getCouponAnalyticsProcedure = publicProcedure
   });
 
 export default getCouponAnalyticsProcedure;
+

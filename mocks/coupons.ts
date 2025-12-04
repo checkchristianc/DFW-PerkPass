@@ -257,3 +257,4 @@ export const MOCK_COUPONS: Coupon[] = [
     reviewedAt: '2024-12-24T20:00:00Z'
   },
 ];
+

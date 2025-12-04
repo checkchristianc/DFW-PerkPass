@@ -462,3 +462,4 @@ const styles = StyleSheet.create({
     textAlign: 'center' as const,
   },
 });
+

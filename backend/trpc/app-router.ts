@@ -24,3 +24,4 @@ export const appRouter = createTRPCRouter({
     updatePicture: updateProfilePictureProcedure,
   }),
 });
+
