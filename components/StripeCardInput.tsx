@@ -1,4 +1,4 @@
-import { CreditCard } from 'lucide-react-native';
+import { CreditCard } from 'lucide-react';
 import React, { useState, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 

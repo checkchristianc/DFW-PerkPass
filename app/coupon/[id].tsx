@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
-import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2, Ticket, ArrowLeft } from 'lucide-react-native';
+import { Calendar, Tag, Heart, Copy, MapPin, Info, CheckCircle2, Ticket, ArrowLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
   StyleSheet,

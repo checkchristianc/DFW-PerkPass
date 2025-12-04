@@ -12,7 +12,7 @@ import {
   Store,
   ArrowLeft,
   BarChart3,
-} from 'lucide-react-native';
+} from 'lucide-react';
 import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -158,7 +158,7 @@ export default function AdminAnalyticsScreen() {
               style={styles.retryButton}
               onPress={() => {
                 console.log('Retrying analytics fetch...');
-                analyticsQuery.refetch();
+                analyticsQuery.reclient.query('https://dfwperkpassbackend-production.up.railway.app', { method: 'GET' });
               }}
               activeOpacity={0.8}
             >

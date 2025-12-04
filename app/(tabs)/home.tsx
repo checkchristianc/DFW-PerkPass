@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
-import { Search, Sparkles, LogOut } from 'lucide-react-native';
+import { Search, Sparkles, LogOut } from 'lucide-react';
 import {
   StyleSheet,
   Text,

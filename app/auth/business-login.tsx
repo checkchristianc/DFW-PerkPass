@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Briefcase, Mail, Lock, Building2, DollarSign, CheckCircle, CheckSquare, Square } from 'lucide-react-native';
+import { Briefcase, Mail, Lock, Building2, DollarSign, CheckCircle, CheckSquare, Square } from 'lucide-react';
 import React, { useState } from 'react';
 import {
   View,

@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CreditCard, DollarSign, CheckCircle, ExternalLink } from 'lucide-react-native';
+import { CreditCard, DollarSign, CheckCircle, ExternalLink } from 'lucide-react';
 import React, { useEffect, useMemo } from 'react';
 import {
   View,
@@ -37,7 +37,7 @@ export default function PaymentSetupScreen() {
         
         try {
           const backendUrl = process.env.EXPO_PUBLIC_VERCEL_URL || 'http://localhost:3000';
-          const response = await fetch(
+          const response = await client.query(
             `${backendUrl}/api/check-subscription?email=${encodeURIComponent(businessData.email)}`
           );
           

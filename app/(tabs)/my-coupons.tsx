@@ -8,7 +8,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import { Calendar, Clock, QrCode, Tag, Trash2, Edit3 } from 'lucide-react-native';
+import { Calendar, Clock, QrCode, Tag, Trash2, Edit3 } from 'lucide-react';
 import Svg, { Rect } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';

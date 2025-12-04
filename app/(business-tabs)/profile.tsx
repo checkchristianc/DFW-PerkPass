@@ -26,7 +26,7 @@ import {
   Camera,
   LogOut,
   ChevronRight
-} from 'lucide-react-native';
+} from 'lucide-react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Colors from '@/constants/colors';

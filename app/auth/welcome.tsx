@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { User, Briefcase, Tag } from 'lucide-react-native';
+import { User, Briefcase, Tag } from 'lucide-react';
 import React from 'react';
 import {
   View,

@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack, useRouter } from 'expo-router';
-import { Shield, CheckCircle, XCircle, Clock, LogOut, BarChart3 } from 'lucide-react-native';
+import { Shield, CheckCircle, XCircle, Clock, LogOut, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 import {
   StyleSheet,

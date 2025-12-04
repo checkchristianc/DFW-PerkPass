@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Store, BarChart3, User } from "lucide-react-native";
+import { Store, BarChart3, User } from "lucide-react";
 import React from "react";
 
 import Colors from "@/constants/colors";

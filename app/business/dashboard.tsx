@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle, RefreshCw, User } from 'lucide-react-native';
+import { Plus, LogOut, Store, ImagePlus, X, BarChart3, Settings, AlertCircle, Clock, CheckCircle, RefreshCw, User } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import {
   StyleSheet,

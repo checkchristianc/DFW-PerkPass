@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import { TrendingUp, Eye, Ticket, Percent, Calendar, BarChart3 } from 'lucide-react-native';
+import { TrendingUp, Eye, Ticket, Percent, Calendar, BarChart3 } from 'lucide-react';
 import { useMemo } from 'react';
 import {
   StyleSheet,

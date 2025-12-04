@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack } from 'expo-router';
-import { Filter } from 'lucide-react-native';
+import { Filter } from 'lucide-react';
 import {
   StyleSheet,
   Text,

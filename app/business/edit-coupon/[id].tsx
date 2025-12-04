@@ -12,7 +12,7 @@ import {
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { ChevronLeft, Save, ImagePlus, X } from 'lucide-react-native';
+import { ChevronLeft, Save, ImagePlus, X } from 'lucide-react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Colors from '@/constants/colors';

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { Calendar, Clock, Tag, ChevronLeft, TrendingUp } from 'lucide-react-native';
+import { Calendar, Clock, Tag, ChevronLeft, TrendingUp } from 'lucide-react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import Colors from '@/constants/colors';

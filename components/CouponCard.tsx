@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Heart, Calendar, Tag } from 'lucide-react-native';
+import { Heart, Calendar, Tag } from 'lucide-react';
 import { memo } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Pressable, Platform } from 'react-native';
 

@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Grid3x3, Heart, Ticket, User } from "lucide-react-native";
+import { Home, Grid3x3, Heart, Ticket, User } from "lucide-react";
 import React from "react";
 
 import Colors from "@/constants/colors";

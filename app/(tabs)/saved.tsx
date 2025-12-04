@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
 import { Stack } from 'expo-router';
-import { Heart, HeartOff } from 'lucide-react-native';
+import { Heart, HeartOff } from 'lucide-react';
 import {
   StyleSheet,
   Text,
