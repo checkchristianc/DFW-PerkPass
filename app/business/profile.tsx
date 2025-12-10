@@ -232,7 +232,7 @@ export default function BusinessProfileScreen() {
 
                 <View style={styles.storeHoursSection}>
                   <Text style={styles.sectionLabel}>Store Hours</Text>
-                  {Object.entries(editedProfile.storeHours).map(([day, hours]) => (
+                  {Object.entries(editedProfile.storeHours)???.map(([day, hours]) => (
                     <View key={day} style={styles.hoursRow}>
                       <Text style={styles.dayLabel}>{day.charAt(0).toUpperCase() + day.slice(1)}</Text>
                       <TextInput
@@ -369,7 +369,7 @@ export default function BusinessProfileScreen() {
                     <Clock size={18} color={Colors.primary} />
                     <Text style={styles.storeHoursTitle}>Store Hours</Text>
                   </View>
-                  {Object.entries(profile.storeHours).map(([day, hours]) => (
+                  {Object.entries(profile.storeHours)???.map(([day, hours]) => (
                     <View key={day} style={styles.hoursViewRow}>
                       <Text style={styles.dayText}>
                         {day.charAt(0).toUpperCase() + day.slice(1)}

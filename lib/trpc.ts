@@ -1,60 +1,38 @@
+// /lib/trpc.ts
+
 import { createTRPCReact } from "@trpc/react-query";
-import { createTRPCClient, httpLink } from "@trpc/client";
-import type { AppRouter } from "@/backend/trpc/router-type";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 
-export const trpc = createTRPCReact<AppRouter>();
+// The URL of your deployed backend
+const API_URL = process.env.EXPO_PUBLIC_RORK_API_BASE_URL || "https://dfwperkpassbackend-production.up.railway.app/";
 
-const getBaseUrl = () => {
-  if (process.env.EXPO_PUBLIC_RORK_API_BASE_URL) {
-    return process.env.EXPO_PUBLIC_RORK_API_BASE_URL;
-  }
+// Create TRPC hooks for your app
+export const trpc = createTRPCReact<any>();
 
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-
-  return '';
-};
-
+// TRPC client for React Query
 export const trpcReactClient = trpc.createClient({
   links: [
-    httpLink({
-      url: `${getBaseUrl()}/api/trpc`,
-    }),
-  ],
-});
-
-export const trpcClient = createTRPCClient<AppRouter>({
-  links: [
-    httpLink({
-      url: `${getBaseUrl()}/api/trpc`,
-      headers: () => {
+    httpBatchLink({
+      url: API_URL,
+      headers() {
         return {
           'Content-Type': 'application/json',
         };
       },
-      fetch: (url, options) => {
-        return fetch(url, {
-          ...options,
-          credentials: 'include',
-        }).then(async (response) => {
-          if (!response.ok) {
-            const text = await response.text();
-            console.error('HTTP error response:', text);
-            throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
-          }
-          
-          const contentType = response.headers.get('content-type');
-          if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            console.error('Non-JSON response:', text);
-            throw new Error(`Expected JSON response but got: ${contentType}. Body: ${text}`);
-          }
-          
-          return response;
-        });
-      },
     }),
   ],
 });
 
+// Another TRPC client if you need a direct client instance
+export const trpcClient = createTRPCClient<any>({
+  links: [
+    httpBatchLink({
+      url: API_URL,
+      headers() {
+        return {
+          'Content-Type': 'application/json',
+        };
+      },
+    }),
+  ],
+});

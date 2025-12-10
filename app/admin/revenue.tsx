@@ -144,7 +144,7 @@ export default function AdminRevenueScreen() {
             </View>
             
             <View style={styles.historyList}>
-              {monthlyRevenueHistory.map((item, index) => (
+              {monthlyRevenueHistory???.map((item, index) => (
                 <View key={item.month} style={styles.historyItem}>
                   <View style={styles.historyLeft}>
                     <Text style={styles.historyMonth}>{item.month} 2025</Text>

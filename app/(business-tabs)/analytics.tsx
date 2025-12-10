@@ -39,7 +39,7 @@ export default function BusinessAnalyticsScreen() {
     const conversionRate =
       totalViews > 0 ? ((totalRedemptions / totalViews) * 100).toFixed(1) : '0.0';
 
-    const couponStats = businessCoupons.map((coupon) => {
+    const couponStats = (businessCoupons ?? []).map((coupon) => {
       const couponViews = views[coupon.id] || 0;
       const couponRedemptions = redemptions.filter((r) => r.couponId === coupon.id).length;
       const couponConversion =
@@ -62,7 +62,7 @@ export default function BusinessAnalyticsScreen() {
       return date.toISOString().split('T')[0];
     });
 
-    const dailyRedemptions = last7Days.map((date) => {
+    const dailyRedemptions = last7Days??.map((date) => {
       const count = redemptions.filter((r) => {
         const redemptionDate = new Date(r.redeemedAt).toISOString().split('T')[0];
         return redemptionDate === date;
@@ -81,8 +81,10 @@ export default function BusinessAnalyticsScreen() {
     };
   }, [businessCoupons, views, redemptions]);
 
-  const maxDailyRedemptions = Math.max(...analytics.dailyRedemptions.map((d) => d.count), 1);
-
+const maxDailyRedemptions = Math.max(
+  ...(analytics.dailyRedemptions ?? []).map((d) => d.count),
+  1
+);
   return (
     <>
       <Stack.Screen
@@ -143,7 +145,7 @@ export default function BusinessAnalyticsScreen() {
               <Text style={styles.sectionTitle}>Last 7 Days</Text>
             </View>
             <View style={styles.chartContainer}>
-              {analytics.dailyRedemptions.map((day, index) => {
+              {analytics.dailyRedemptions??.map((day, index) => {
                 const heightPercentage = (day.count / maxDailyRedemptions) * 100;
                 const barHeight = Math.max(heightPercentage, 5);
                 const dayLabel = new Date(day.date).toLocaleDateString('en-US', {
@@ -210,37 +212,38 @@ export default function BusinessAnalyticsScreen() {
             <View style={styles.sectionHeader}>
               <Ticket size={20} color={Colors.primary} />
               <Text style={styles.sectionTitle}>Coupon Performance</Text>
-            </View>
-            {analytics.couponStats.length === 0 ? (
-              <View style={styles.emptyState}>
+            </View> 
+          {analytics.couponStats.length === 0 ? (
+              <View   style={styles.emptyState}>
                 <Text style={styles.emptyStateText}>
                   No active coupons yet. Create a coupon to see analytics.
                 </Text>
               </View>
             ) : (
-              analytics.couponStats.map((coupon) => (
-                <View key={coupon.id} style={styles.couponStatCard}>
-                  <Text style={styles.couponStatTitle} numberOfLines={1}>
-                    {coupon.title}
-                  </Text>
-                  <View style={styles.couponStatRow}>
-                    <View style={styles.couponStatItem}>
-                      <Text style={styles.couponStatValue}>{coupon.views}</Text>
-                      <Text style={styles.couponStatLabel}>Views</Text>
-                    </View>
-                    <View style={styles.couponStatDivider} />
-                    <View style={styles.couponStatItem}>
-                      <Text style={styles.couponStatValue}>{coupon.redemptions}</Text>
-                      <Text style={styles.couponStatLabel}>Redemptions</Text>
-                    </View>
-                    <View style={styles.couponStatDivider} />
-                    <View style={styles.couponStatItem}>
-                      <Text style={styles.couponStatValue}>{coupon.conversion}%</Text>
-                      <Text style={styles.couponStatLabel}>Rate</Text>
-                    </View>
-                  </View>
-                </View>
-              ))
+              (analytics.couponStats ?? []).map((coupon) => (
+  <View key={coupon.id} style={styles.couponStatCard}>
+    <Text style={styles.couponStatTitle} numberOfLines={1}>
+      {coupon.title}
+    </Text>
+    <View style={styles.couponStatRow}>
+      <View style={styles.couponStatItem}>
+        <Text style={styles.couponStatValue}>{coupon.views}</Text>
+        <Text style={styles.couponStatLabel}>Views</Text>
+      </View>
+      <View style={styles.couponStatDivider} />
+      <View style={styles.couponStatItem}>
+        <Text style={styles.couponStatValue}>{coupon.redemptions}</Text>
+        <Text style={styles.couponStatLabel}>Redemptions</Text>
+      </View>
+      <View style={styles.couponStatDivider} />
+      <View style={styles.couponStatItem}>
+        <Text style={styles.couponStatValue}>{coupon.conversion}%</Text>
+        <Text style={styles.couponStatLabel}>Rate</Text>
+      </View>
+    </View>
+  </View>
+))
+
             )}
           </View>
 

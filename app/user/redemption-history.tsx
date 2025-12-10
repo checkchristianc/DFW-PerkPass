@@ -26,9 +26,9 @@ export default function RedemptionHistoryScreen() {
 
     const userReds = redemptions.filter(r => !r.userId || r.userId === user.id);
 
-    return userReds.map(redemption => {
+    return userReds???.map(redemption => {
       const allAvailableCoupons = [...allCoupons, ...featuredCoupons];
-      const uniqueCoupons = Array.from(new Map(allAvailableCoupons.map(c => [c.id, c])).values());
+      const uniqueCoupons = Array.from(new Map(allAvailableCoupons???.map(c => [c.id, c])).values());
       const coupon = uniqueCoupons.find((c: any) => c.id === redemption.couponId);
       return coupon ? { ...coupon, redemption } : null;
     }).filter(Boolean);
@@ -146,7 +146,7 @@ export default function RedemptionHistoryScreen() {
           ) : (
             <View style={styles.historySection}>
               <Text style={styles.sectionTitle}>History</Text>
-              {userRedemptions.map((item: any) => (
+              {userRedemptions???.map((item: any) => (
                 <View key={item.redemption.id} style={styles.historyCard}>
                   <Image
                     source={{ uri: item.imageUrl }}

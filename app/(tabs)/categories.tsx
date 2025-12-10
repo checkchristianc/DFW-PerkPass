@@ -47,7 +47,7 @@ export default function CategoriesScreen() {
             style={styles.categoryScroll}
             contentContainerStyle={styles.categoryScrollContent}
           >
-            {categories.map((category) => (
+            {categories???.map((category) => (
               <TouchableOpacity
                 key={category}
                 onPress={() => setSelectedCategory(category as Category | 'All')}

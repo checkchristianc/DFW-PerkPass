@@ -298,23 +298,29 @@ export default function BusinessProfileScreen() {
                 </View>
 
                 <View style={styles.storeHoursSection}>
-                  <Text style={styles.sectionLabel}>Store Hours</Text>
-                  {Object.entries(editedProfile.storeHours).map(([day, hours]) => (
-                    <View key={day} style={styles.hoursRow}>
-                      <Text style={styles.dayLabel}>{day.charAt(0).toUpperCase() + day.slice(1)}</Text>
-                      <TextInput
-                        style={styles.hoursInput}
-                        value={hours}
-                        onChangeText={(text) => setEditedProfile({
-                          ...editedProfile,
-                          storeHours: { ...editedProfile.storeHours, [day]: text }
-                        })}
-                        placeholder="e.g., 9:00 AM - 5:00 PM"
-                        placeholderTextColor={Colors.textSecondary}
-                      />
-                    </View>
-                  ))}
-                </View>
+  <Text style={styles.sectionLabel}>Store Hours</Text>
+
+  {(Object.entries(editedProfile.storeHours ?? {})).map(([day, hours]) => (
+    <View key={day} style={styles.hoursRow}>
+      <Text style={styles.dayLabel}>
+        {day.charAt(0).toUpperCase() + day.slice(1)}
+      </Text>
+      <TextInput
+        style={styles.hoursInput}
+        value={hours}
+        onChangeText={(text) =>
+          setEditedProfile({
+            ...editedProfile,
+            storeHours: { ...editedProfile.storeHours, [day]: text },
+          })
+        }
+        placeholder="e.g., 9:00 AM - 5:00 PM"
+        placeholderTextColor={Colors.textSecondary}
+      />
+    </View>
+  ))}
+</View>
+
 
                 <View style={styles.editActions}>
                   <TouchableOpacity
@@ -431,20 +437,22 @@ export default function BusinessProfileScreen() {
 
                 <View style={styles.divider} />
 
-                <View style={styles.storeHoursCard}>
-                  <View style={styles.storeHoursHeader}>
-                    <Clock size={18} color={Colors.primary} />
-                    <Text style={styles.storeHoursTitle}>Store Hours</Text>
-                  </View>
-                  {Object.entries(profile.storeHours).map(([day, hours]) => (
-                    <View key={day} style={styles.hoursViewRow}>
-                      <Text style={styles.dayText}>
-                        {day.charAt(0).toUpperCase() + day.slice(1)}
-                      </Text>
-                      <Text style={styles.hoursText}>{hours}</Text>
-                    </View>
-                  ))}
-                </View>
+              <View style={styles.storeHoursCard}>
+  <View style={styles.storeHoursHeader}>
+    <Clock size={18} color={Colors.primary} />
+    <Text style={styles.storeHoursTitle}>Store Hours</Text>
+  </View>
+
+  {(Object.entries(profile.storeHours ?? {})).map(([day, hours]) => (
+    <View key={day} style={styles.hoursViewRow}>
+      <Text style={styles.dayText}>
+        {day.charAt(0).toUpperCase() + day.slice(1)}
+      </Text>
+      <Text style={styles.hoursText}>{hours}</Text>
+    </View>
+  ))}
+</View>
+
 
                 <TouchableOpacity
                   style={styles.editProfileButton}

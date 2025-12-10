@@ -240,7 +240,7 @@ export default function BusinessDashboard() {
               </View>
             ) : (
               <View style={styles.couponsList}>
-                {businessCoupons.map((coupon) => (
+                {businessCoupons???.map((coupon) => (
                   <View key={coupon.id} style={styles.couponItem}>
                     <Image
                       source={{ uri: coupon.imageUrl }}
@@ -388,7 +388,7 @@ export default function BusinessDashboard() {
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Category *</Text>
                 <View style={styles.categoryGrid}>
-                  {categories.map((cat) => (
+                  {categories???.map((cat) => (
                     <TouchableOpacity
                       key={cat}
                       style={[

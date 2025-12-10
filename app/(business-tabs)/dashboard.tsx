@@ -242,66 +242,66 @@ export default function BusinessDashboard() {
                 <Text style={styles.emptyStateText}>Create your first coupon to start attracting customers</Text>
               </View>
             ) : (
-              <View style={styles.couponsList}>
-                {businessCoupons.map((coupon) => (
-                  <View key={coupon.id} style={styles.couponItem}>
-                    <Image
-                      source={{ uri: coupon.imageUrl }}
-                      style={styles.couponThumbnail}
-                      contentFit="cover"
-                    />
-                    <View style={styles.couponDetails}>
-                      <View style={styles.couponStatus}>
-                        {coupon.status === 'pending' ? (
-                          <View style={styles.statusBadgePending}>
-                            <Clock size={12} color={Colors.warning} />
-                            <Text style={styles.statusTextPending}>Pending Review</Text>
-                          </View>
-                        ) : (
-                          <View style={styles.statusBadgeApproved}>
-                            <CheckCircle size={12} color={Colors.success} />
-                            <Text style={styles.statusTextApproved}>Active</Text>
-                          </View>
-                        )}
-                      </View>
-                      <Text style={styles.couponItemTitle} numberOfLines={1}>{coupon.title}</Text>
-                      <Text style={styles.couponItemDiscount}>{coupon.discount}</Text>
-                      <Text style={styles.couponItemCategory}>{coupon.category}</Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.removeCouponButton}
-                      onPress={() => {
-                        Alert.alert(
-                          'Delete Coupon',
-                          `Are you sure you want to delete "${coupon.title}"? This action cannot be undone.`,
-                          [
-                            {
-                              text: 'Cancel',
-                              style: 'cancel',
-                            },
-                            {
-                              text: 'Delete',
-                              style: 'destructive',
-                              onPress: async () => {
-                                console.log('Deleting coupon:', coupon.id);
-                                const result = await deleteCoupon(coupon.id, user?.businessName || '');
-                                if (result.success) {
-                                  Alert.alert('Success', 'Coupon deleted successfully');
-                                } else {
-                                  Alert.alert('Error', 'Failed to delete coupon');
-                                }
-                              },
-                            },
-                          ]
-                        );
-                      }}
-                    >
-                      <X size={18} color={Colors.danger} />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-            )}
+
+{(businessCoupons ?? []).map((coupon) => (
+  <View key={coupon.id} style={styles.couponItem}>
+    <Image
+      source={{ uri: coupon.imageUrl }}
+      style={styles.couponThumbnail}
+      contentFit="cover"
+    />
+    <View style={styles.couponDetails}>
+      <View style={styles.couponStatus}>
+        {coupon.status === 'pending' ? (
+          <View style={styles.statusBadgePending}>
+            <Clock size={12} color={Colors.warning} />
+            <Text style={styles.statusTextPending}>Pending Review</Text>
+          </View>
+        ) : (
+          <View style={styles.statusBadgeApproved}>
+            <CheckCircle size={12} color={Colors.success} />
+            <Text style={styles.statusTextApproved}>Active</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.couponItemTitle} numberOfLines={1}>
+        {coupon.title}
+      </Text>
+      <Text style={styles.couponItemDiscount}>{coupon.discount}</Text>
+      <Text style={styles.couponItemCategory}>{coupon.category}</Text>
+    </View>
+    <TouchableOpacity
+      style={styles.removeCouponButton}
+      onPress={() => {
+        Alert.alert(
+          'Delete Coupon',
+          `Are you sure you want to delete "${coupon.title}"? This action cannot be undone.`,
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: async () => {
+                const result = await deleteCoupon(
+                  coupon.id,
+                  user?.businessName || ''
+                );
+                if (result.success) {
+                  Alert.alert('Success', 'Coupon deleted successfully');
+                } else {
+                  Alert.alert('Error', 'Failed to delete coupon');
+                }
+              },
+            },
+          ]
+        );
+      }}
+    >
+      <X size={18} color={Colors.danger} />
+    </TouchableOpacity>
+  </View>
+))}
+
           </View>
 
           <View style={styles.addCouponSection}>
@@ -391,25 +391,26 @@ export default function BusinessDashboard() {
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Category *</Text>
                 <View style={styles.categoryGrid}>
-                  {categories.map((cat) => (
-                    <TouchableOpacity
-                      key={cat}
-                      style={[
-                        styles.categoryChip,
-                        formData.category === cat && styles.categoryChipSelected,
-                      ]}
-                      onPress={() => setFormData({ ...formData, category: cat })}
-                    >
-                      <Text
-                        style={[
-                          styles.categoryChipText,
-                          formData.category === cat && styles.categoryChipTextSelected,
-                        ]}
-                      >
-                        {cat}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                  {(categories ?? []).map((cat) => (
+  <TouchableOpacity
+    key={cat}
+    style={[
+      styles.categoryChip,
+      formData.category === cat && styles.categoryChipSelected,
+    ]}
+    onPress={() => setFormData({ ...formData, category: cat })}
+  >
+    <Text
+      style={[
+        styles.categoryChipText,
+        formData.category === cat && styles.categoryChipTextSelected,
+      ]}
+    >
+      {cat}
+    </Text>
+  </TouchableOpacity>
+))}
+
                 </View>
               </View>
 

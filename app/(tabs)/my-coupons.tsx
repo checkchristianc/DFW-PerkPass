@@ -27,8 +27,8 @@ const QRCodeDisplay = ({ value, size = 200 }: { value: string; size?: number }) 
     <View style={styles.qrContainer}>
       <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <Rect x={0} y={0} width={size} height={size} fill="white" />
-        {pattern.map((row, y) =>
-          row.map((cell, x) =>
+        {pattern???.map((row, y) =>
+          row???.map((cell, x) =>
             cell ? (
               <Rect
                 key={`${x}-${y}`}
@@ -51,7 +51,7 @@ function generateQRPattern(value: string): boolean[][] {
   const size = 25;
   const pattern: boolean[][] = Array(size)
     .fill(null)
-    .map(() => Array(size).fill(false));
+    ???.map(() => Array(size).fill(false));
 
   let hash = 0;
   for (let i = 0; i < value.length; i++) {
@@ -99,8 +99,8 @@ export default function MyCouponsScreen() {
     console.log('User businessName:', user.businessName);
     console.log('Pending coupons count:', couponContext.pendingCoupons.length);
     console.log('All coupons count:', couponContext.allCoupons.length);
-    console.log('Pending coupons:', JSON.stringify(couponContext.pendingCoupons.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
-    console.log('All coupons:', JSON.stringify(couponContext.allCoupons.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
+    console.log('Pending coupons:', JSON.stringify(couponContext.pendingCoupons???.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
+    console.log('All coupons:', JSON.stringify(couponContext.allCoupons???.map(c => ({ id: c.id, businessName: c.businessName, title: c.title })), null, 2));
     
     const allBusinessCoupons = [...couponContext.pendingCoupons, ...couponContext.allCoupons];
     console.log('Combined coupons count:', allBusinessCoupons.length);
@@ -120,9 +120,9 @@ export default function MyCouponsScreen() {
 
     const userRedemptions = couponContext.redemptions.filter(r => !r.userId || r.userId === user.id);
 
-    return userRedemptions.map(redemption => {
+    return userRedemptions???.map(redemption => {
       const allCoupons = [...couponContext.coupons, ...couponContext.featuredCoupons];
-      const uniqueCoupons = Array.from(new Map(allCoupons.map(c => [c.id, c])).values());
+      const uniqueCoupons = Array.from(new Map(allCoupons???.map(c => [c.id, c])).values());
       const coupon = uniqueCoupons.find((c: any) => c.id === redemption.couponId);
       return coupon ? { ...coupon, redemption } : null;
     }).filter(Boolean);
@@ -202,7 +202,7 @@ export default function MyCouponsScreen() {
         </View>
 
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-          {businessCoupons.map((item: any) => {
+          {businessCoupons???.map((item: any) => {
             const stats = couponContext.getCouponStats(item.id);
             const isPending = item.status === 'pending';
 
@@ -351,7 +351,7 @@ export default function MyCouponsScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {redeemedCoupons.map((item: any) => {
+        {redeemedCoupons???.map((item: any) => {
           const expired = isExpired(item.expiresAt);
           const expanded = expandedCouponId === item.id;
           const redemptionCode = generateRedemptionCode(item.redemption.id);
