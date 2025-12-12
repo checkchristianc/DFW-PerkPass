@@ -1,82 +1,80 @@
 {
-    "expo":  {
-                 "name":  "DFW Perk Pass",
-                 "slug":  "coupon-hub-ilzg7uq",
-                 "version":  "1.0.0",
-                 "orientation":  "portrait",
-                 "icon":  "./assets/images/icon.png",
-                 "scheme":  "rork-app",
-                 "userInterfaceStyle":  "automatic",
-                 "newArchEnabled":  true,
-                 "splash":  {
-                                "image":  "./assets/images/splash-icon.png",
-                                "resizeMode":  "contain",
-                                "backgroundColor":  "#ffffff"
-                            },
-                 "ios":  {
-                             "supportsTablet":  true,
-                             "bundleIdentifier":  "app.rork.couponhubilzg7uq",
-                             "infoPlist":  {
-                                               "CFBundleAllowMixedLocalizations":  true,
-                                               "CFBundleLocalizations":  [
-                                                                             "fr"
-                                                                         ],
-                                               "NSPhotoLibraryUsageDescription":  "Allow $(PRODUCT_NAME) to access your photos",
-                                               "NSCameraUsageDescription":  "Allow $(PRODUCT_NAME) to access your camera",
-                                               "NSMicrophoneUsageDescription":  "Allow $(PRODUCT_NAME) to access your microphone"
-                                           }
-                         },
-                 "android":  {
-                                 "adaptiveIcon":  {
-                                                      "foregroundImage":  "./assets/images/adaptive-icon.png",
-                                                      "backgroundColor":  "#ffffff"
-                                                  },
-                                 "package":  "app.rork.coupon_hub_ilzg7uq",
-                                 "versionCode":  18,
-                                 "permissions":  [
-                                                     "android.permission.CAMERA",
-                                                     "android.permission.READ_EXTERNAL_STORAGE",
-                                                     "android.permission.WRITE_EXTERNAL_STORAGE",
-                                                     "android.permission.RECORD_AUDIO"
-                                                 ]
-                             },
-                 "web":  {
-                             "favicon":  "./assets/images/favicon.png"
-                         },
-                 "plugins":  [
-                                 [
-                                     "expo-router",
-                                     {
-                                         "origin":  "https://rork.com/"
-                                     }
-                                 ],
-                                 "expo-font",
-                                 "expo-web-browser",
-                                 [
-                                     "@stripe/stripe-react-native",
-                                     {
-                                         "merchantIdentifier":  "string | string[]",
-                                         "enableGooglePay":  "boolean"
-                                     }
-                                 ],
-                                 [
-                                     "expo-image-picker",
-                                     {
-                                         "photosPermission":  "The app accesses your photos to let you share them with your friends."
-                                     }
-                                 ]
-                             ],
-                 "experiments":  {
-                                     "typedRoutes":  true
-                                 },
-                 "extra":  {
-                               "router":  {
-                                              "origin":  "https://rork.com/"
-                                          },
-                               "eas":  {
-                                           "projectId":  "399cee67-e7db-432c-a53f-80c6b67d111a"
-                                       }
-                           },
-                 "owner":  "perkpass"
-             }
+  "expo": {
+    "name": "DFW Perk Pass",
+    "slug": "coupon-hub-ilzg7uq",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "rork-app",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.rork.coupon-hub-ilzg7uq",
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": [
+          "fr"
+        ],
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos",
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "app.rork.coupon_hub_ilzg7uq",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://rork.com/"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      [
+        "expo-stripe",
+        {
+          "merchantIdentifier": "merchant.com.rork.couponhub",
+          "enableGooglePay": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://rork.com/"
+      },
+      "eas": {
+        "projectId": "399cee67-e7db-432c-a53f-80c6b67d111a"
+      }
+    }
+  }
 }
